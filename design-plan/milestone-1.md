@@ -11,8 +11,7 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 ## Catalog
 > What will your catalog website be about? (1 sentence)
 
-TODO: catalog topic
-
+This catalog will feature a list of food establishments located throughout Ithaca/Tompkins County.
 
 ## Consumer Planning
 
@@ -20,11 +19,16 @@ TODO: catalog topic
 > Briefly explain your site's **consumer** audience.
 > Your audience should be specific, but not arbitrarily specific.
 
-TODO: _cohesive_ audience
+The website's audience consists of residents, students, and visitors within the Ithaca area searching for the best local eateries.
 
 > Be specific and justify why this audience is a **cohesive** group. (1-2 sentences)
 
-TODO: why is this a _cohesive_ audience?
+They share a common goal of finding quality dining options within an isolated college town.
+
+TODO: NEED ONE WEBPAGE BARE MINIMUM "VIEW ALL" PAGES, (EITHER CONSUMER VIEW ALL PAGE OR ADMIN VIEW ALL PAGE)
+- ONE PLACEHOLDER IMAGE (DOESNT NEED TO BE POLISHED)
+- NEED TO HAVE DATABASE
+  - two tables for foreign key stuff
 
 
 ### Consumer: Audience Goals
@@ -32,13 +36,9 @@ TODO: why is this a _cohesive_ audience?
 > List each goal below. There is no specific number of goals required for this, but you need
 > enough to do the job (Hint: It's at least 1, but probably no more than 3).
 
-Goal 1: TODO: brief title
-
-Goal 2: TODO: brief title
-
-Goal 3: TODO: brief title
-
-TODO: add as many goals as needed
+- Goal 1: Discover the best restaurants and cafés in Ithaca.
+- Goal 2: Read background information, reviews, and menu highlights for specific food places.
+- Goal 3: Easily compare options based on cuisine type, price range, and proximity.
 
 
 ### Consumer: Persona
@@ -47,16 +47,26 @@ TODO: add as many goals as needed
 > You may type out the persona below with bullet points or include an image of the persona.
 > Just make sure it's easy to read the persona when previewing markdown.
 
-Persona's Name: TODO: persona name
+Source: ChatGPT 5
 
-TODO: persona details
+- ChatGPT 5 was utilized for the generation of the persona face, as well as inspiration for his biography
 
+![image](/design-plan/alex.png)
+
+Persona's Name: Alex Chen, 21(M)
+
+- Occupation: University Student
+- Residence: Toni Morrison Hall
+- Hobbies: reading manga, hanging out with friends, outdoor concerts/raving
+
+Alex hails from Flushing, New York, where he attended a community college, and was fortunate enough to transfer into the prestigious Cornell University. Throughout his youth, Alex was exposed to countless culinary ventures within the massive cultural boiling pot that is the Big Apple.
+
+Now within an isolated college town, Alex has regularly expressed concerns of the lack of energy that can be matched by the local eateries. However, a small glimmer of hope shines from within, as he seeks to find the best places to dine in with the close friends he will potentially make.
 
 ### Consumer: Narrow or Wide Screen
 > How will your **consumer** user access this website? From a narrow or wide screen?
 
-TODO: narrow or wide screen
-
+Alex will frequently access this website through his mobile device (ie. a narrow screen)
 
 ## Administrator Planning
 
@@ -64,26 +74,22 @@ TODO: narrow or wide screen
 > Briefly explain your site's **administrator** audience.
 > Your audience should be specific, but not arbitrarily specific.
 
-TODO: _cohesive_ audience
+TODO: Tips: think of administrator as a voluntary contributor (ie. wikipedia, fandom, etc.)
+
+The administrator audience comprise of longer-term residents of the Ithaca/Tompkins County area who are deeply familiar with the local dining scene and take pride in sharing their cilinary insights with others.
 
 > Be specific and justify why this audience is a **cohesive** group. (1-2 sentences)
 
-TODO: why is this a _cohesive_ audience?
-
+The audience shares longevity in the community and a passion for food culture, which puts them in a position to curate a collection of local dining knowledge and ensure others can benefit without having to go through the trial and error of trying place by place.
 
 ### Administrator: Audience Goals
 > Document your **administrator** audience's goals.
 > List each goal below. There is no specific number of goals required for this, but you need
 > enough to do the job (Hint: It's at least 1, but probably no more than 3).
 
-Goal 1: TODO: brief title
-
-Goal 2: TODO: brief title
-
-Goal 3: TODO: brief title
-
-TODO: add as many goals as needed
-
+- Goal 1: Share knowledge and recommendations of quality eateries with the Ithaca community
+- Goal 2: Monitor and update essential restaurant information.
+- Goal 3: Ensure that the database remains accurate and reflective of current dining options.
 
 ### Administrator: Persona
 > Use the goals you identified to develop a persona of your site's **administrator** audience.
@@ -91,15 +97,25 @@ TODO: add as many goals as needed
 > You may type out the persona below with bullet points or include an image of the persona.
 > Just make sure it's easy to read the persona when previewing markdown.
 
-Persona's Name: TODO: persona name
+Source: ChatGPT 5
 
-TODO: persona details
+- ChatGPT 5 was utilized for the generation of the persona face, as well as inspiration for his biography
+
+Persona's Name: Morgan Li, 42(M)
+
+Occupation: Librarian
+Residence: Ithaca, New York
+Hobbies: hiking, reading, strolling in the local park, spending time with his family
+
+Happily married and raising a family of three children, Morgan works at the Tompkins County Public Library. Alex and his family has lived in Ithaca for almost two decades, ever since he settled into the area for his undergraduate and post-graduate studies.
+
+With this being said, Alex knows the ins and outs of every dinery within the local area, particularly the Ithaca Commons. Reminiscing of his days as a freshman, when he did not receive any guidance from peers and had to find out everything by himself, Alex made it one of his hobbies to become a voice on which eateries to try out for those new to the area.
 
 
 ### Administrator: Narrow or Wide Screen
 > How will your **administrator** user access this website? From a narrow or wide screen?
 
-TODO: narrow or wide screen
+Morgan will access this website from a wide screen for the more comprehensive tasks; HOWEVER, he has the capability of accessing from the narrow screen as he is an avid participator of the website.
 
 
 ## Catalog Design
@@ -120,14 +136,14 @@ TODO: design pattern explanation
 > Plan your HTTP routing.
 > List each route and the PHP file for each route.
 
-| Page                                     | Route       | PHP File       |
-| ---------------------------------------- | ----------- | -------------- |
-| home / consumer view all / filter by tag | /           | pages/home.php |
-| consumer entry details                   | TODO: route | TODO: php file |
-| admin view all / filter by tag           | TODO: route | TODO: php file |
-| admin insert entry                       | TODO: route | TODO: php file |
-| admin edit entry / tag / untag           | TODO: route | TODO: php file |
-| login                                    | TODO: route | TODO: php file |
+| Page                                     | Route              | PHP File                 |
+| ---------------------------------------- | -----------        | --------------           |
+| home / consumer view all / filter by tag | /                  | pages/home.php           |
+| consumer entry details                   | /reviews/rest_name | pages/consumer_entry.php |
+| admin view all / filter by tag           | TODO: route        | TODO: php file           |
+| admin insert entry                       | TODO: route        | TODO: php file           |
+| admin edit entry / tag / untag           | TODO: route        | TODO: php file           |
+| login                                    | /login             | TODO: php file           |
 
 > Explain why these routes (URLs) are usable for your persona. (1 sentence)
 
@@ -140,12 +156,20 @@ TODO: justification of routing design
 > A bulleted list is probably the simplest way to do this.
 > Include constraints for each field.
 
+TODO: NEED THREE TABLES!!!
+
 **Table:** TODO: table name
 
 - field1: TYPE {constraints...},
 - field2: ...
 - TODO: table fields + type + constraints
 
+table1 fields: id, name of restaurant, address of restaurant,
+
+table2 fields: id, user, favorite dish, rating, price, comment
+
+table3 fields: id, restaurant_id, user_id
+(table3 should link table1 and table2 together)
 
 ## References
 
