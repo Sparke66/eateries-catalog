@@ -25,21 +25,18 @@ The website's audience consists of residents, students, and visitors within the 
 
 They share a common goal of finding quality dining options within an isolated college town.
 
-TODO: NEED ONE WEBPAGE BARE MINIMUM "VIEW ALL" PAGES, (EITHER CONSUMER VIEW ALL PAGE OR ADMIN VIEW ALL PAGE)
-- ONE PLACEHOLDER IMAGE (DOESNT NEED TO BE POLISHED)
-- NEED TO HAVE DATABASE
-  - two tables for foreign key stuff
-
-
 ### Consumer: Audience Goals
 > Document your **consumer** audience's goals.
 > List each goal below. There is no specific number of goals required for this, but you need
 > enough to do the job (Hint: It's at least 1, but probably no more than 3).
 
+Source: ChatGPT 5
+
+- ChatGPT 5 was used to explore additional goals of the consumer audience.
+
 - Goal 1: Discover the best restaurants and cafés in Ithaca.
 - Goal 2: Read background information, reviews, and menu highlights for specific food places.
 - Goal 3: Easily compare options based on cuisine type, price range, and proximity.
-
 
 ### Consumer: Persona
 > Use the goals you identified to develop a persona of your site's **consumer** audience.
@@ -74,9 +71,13 @@ Alex will frequently access this website through his mobile device (ie. a narrow
 > Briefly explain your site's **administrator** audience.
 > Your audience should be specific, but not arbitrarily specific.
 
+Source: ChatGPT 5
+
+- ChatGPT 5 was utilized to explore the background and goals of the administrator audience.
+
 TODO: Tips: think of administrator as a voluntary contributor (ie. wikipedia, fandom, etc.)
 
-The administrator audience comprise of longer-term residents of the Ithaca/Tompkins County area who are deeply familiar with the local dining scene and take pride in sharing their cilinary insights with others.
+The administrator audience comprise of longer-term residents of the Ithaca/Tompkins County area who are deeply familiar with the local dining scene and take pride in sharing their culinary insights with others.
 
 > Be specific and justify why this audience is a **cohesive** group. (1-2 sentences)
 
@@ -176,7 +177,7 @@ table3 fields: id, restaurant_id, user_id
 ### Collaborators
 > List any persons you collaborated with on this project.
 
-TODO: list your collaborators
+n/a
 
 
 ### Reference Resources
@@ -185,7 +186,8 @@ TODO: list your collaborators
 >
 > Provide the URL to the resources you used and include a short description of how you used each resource.
 
-TODO: list reference resources
+- ChatGPT 5 <https://chatgpt.com>
+  - ChatGPT 5 was utilized to explore audience and administrator goals for the website, and for image generation of the corresponding personas.
 
 
 [← Table of Contents](design-journey.md)
