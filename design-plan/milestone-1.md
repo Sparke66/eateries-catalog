@@ -172,6 +172,8 @@ table2 fields: id, user, favorite dish, rating, price, comment
 table3 fields: id, restaurant_id, user_id
 (table3 should link table1 and table2 together)
 
+### Idea 1
+
 **Table 1:** Restaurants
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
@@ -183,11 +185,34 @@ table3 fields: id, restaurant_id, user_id
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
 - username: TEXT {Non-null}
 - fav_dish: TEXT {}
+- rating: INTEGER {}
+- comment: TEXT {}
 
 **Table 3:** Foriegn-Key
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- rest_id: 
+- rest_id:
+- reviewer_id:
+
+### Idea 2
+
+**Table 1:** Restaurants
+
+- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
+- name: TEXT {Unique, Non-Null}
+- address: TEXT {Unique, Non-Null}
+
+**Table 2:** Restaurant Types
+
+- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
+- cuisine_type: TEXT {Non-Null}
+
+**Table 3:** Foreign-Key
+
+- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
+- rest_id: INTEGER {Foreign Key->Restaurants.id, Non-Null}
+- cuisine_id: TEXT {Foreign Key->cuisine_type.id, Non-Null}
+
 
 ## References
 
