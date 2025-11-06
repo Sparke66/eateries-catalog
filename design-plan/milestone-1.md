@@ -172,6 +172,23 @@ table2 fields: id, user, favorite dish, rating, price, comment
 table3 fields: id, restaurant_id, user_id
 (table3 should link table1 and table2 together)
 
+**Table 1:** Restaurants
+
+- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
+- name: TEXT {Unique, Non-null}
+- address: TEXT {Unique, Non-null}
+
+**Table 2:** Reviewers
+
+- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
+- username: TEXT {Non-null}
+- fav_dish: TEXT {}
+
+**Table 3:** Foriegn-Key
+
+- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
+- rest_id: 
+
 ## References
 
 ### Collaborators
