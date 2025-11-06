@@ -102,6 +102,8 @@ Source: ChatGPT 5
 
 - ChatGPT 5 was utilized for the generation of the persona face, as well as inspiration for his biography
 
+![image](/design-plan/morgan.png)
+
 Persona's Name: Morgan Li, 42(M)
 
 Occupation: Librarian
@@ -141,10 +143,10 @@ TODO: design pattern explanation
 | ---------------------------------------- | -----------        | --------------           |
 | home / consumer view all / filter by tag | /                  | pages/home.php           |
 | consumer entry details                   | /reviews/rest_name | pages/consumer_entry.php |
-| admin view all / filter by tag           | TODO: route        | TODO: php file           |
-| admin insert entry                       | TODO: route        | TODO: php file           |
-| admin edit entry / tag / untag           | TODO: route        | TODO: php file           |
-| login                                    | /login             | TODO: php file           |
+| admin view all / filter by tag           | /admin             | pages/admin_view.php     |
+| admin insert entry                       | /admin/entry       | pages/admin_insert.php   |
+| admin edit entry / tag / untag           | /admin/edit        | pages/admin_edit.php     |
+| login                                    | /login             | pages/login.php          |
 
 > Explain why these routes (URLs) are usable for your persona. (1 sentence)
 
