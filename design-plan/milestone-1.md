@@ -150,8 +150,7 @@ TODO: design pattern explanation
 
 > Explain why these routes (URLs) are usable for your persona. (1 sentence)
 
-TODO: justification of routing design
-
+There is clear distinction between the consumer and administrator routes, allowing both Alex and Morgan to easily navigate to their respective pages without confusion.
 
 
 ## Database Schema
@@ -159,64 +158,30 @@ TODO: justification of routing design
 > A bulleted list is probably the simplest way to do this.
 > Include constraints for each field.
 
-TODO: NEED THREE TABLES!!!
-
-**Table:** TODO: table name
-
-- field1: TYPE {constraints...},
-- field2: ...
-- TODO: table fields + type + constraints
-
-table1 fields: id, name of restaurant, address of restaurant,
-
-table2 fields: id, user, favorite dish, rating, price, comment
-
-table3 fields: id, restaurant_id, user_id
-(table3 should link table1 and table2 together)
-
-### Idea 1
-
-**Table 1:** Restaurants
-
-- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- name: TEXT {Unique, Non-null}
-- address: TEXT {Unique, Non-null}
-
-**Table 2:** Reviewers
-
-- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- username: TEXT {Non-null}
-- fav_dish: TEXT {}
-- rating: INTEGER {}
-- comment: TEXT {}
-
-**Table 3:** Foriegn-Key
-
-- id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- rest_id:
-- reviewer_id:
-
-### Idea 2
-
 **Table 1:** Restaurants
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
 - name: TEXT {Unique, Non-Null}
 - address: TEXT {Unique, Non-Null}
+- rating: INTEGER {}
+- avg_price: INTEGER {}
+- description: TEXT {}
 
-**Table 2:** Restaurant Types
+**Table 2:** Tags (Cuisine Types)
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
 - cuisine_type: TEXT {Non-Null}
 
-**Table 3:** Foreign-Key
+**Table 3:** Restaurant_Tags (Junction Table)
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
 - rest_id: INTEGER {Foreign Key->Restaurants.id, Non-Null}
 - cuisine_id: TEXT {Foreign Key->cuisine_type.id, Non-Null}
 
-
 ## References
+
+- ChatGPT 5 <https://chatgpt.com>
+  - ChatGPT 5 was utilized to explore audience and administrator goals for the website, and for image generation of the corresponding personas.
 
 ### Collaborators
 > List any persons you collaborated with on this project.
