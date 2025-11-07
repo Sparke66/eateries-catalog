@@ -180,9 +180,6 @@ There is clear distinction between the consumer and administrator routes, allowi
 
 ## References
 
-- ChatGPT 5 <https://chatgpt.com>
-  - ChatGPT 5 was utilized to explore audience and administrator goals for the website, and for image generation of the corresponding personas.
-
 ### Collaborators
 > List any persons you collaborated with on this project.
 

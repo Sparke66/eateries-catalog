@@ -75,7 +75,12 @@ function mime_type($filename)
 }
 
 const ROUTES = array(
-  "/"                             => "pages/home.php"
+  "/"                             => "pages/home.php",           // consumer view all / filter by tag
+  "/reviews/rest_name"            => "pages/consumer_entry.php", // consumer entry details
+  "/admin"                        => "pages/admin_view.php",     // admin view all / filter by tag
+  "/admin/entry"                  => "pages/admin_insert.php",   // admin insert entry
+  "/admin/edit"                   => "pages/admin_edit.php",     // admin edit entry / tag / untag
+  "/login"                        => "pages/login.php"           // login
 );
 
 // Grabs the URI and separates it from query string parameters

@@ -12,79 +12,83 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 > Design the URL for filtering by a tag on the view all page for the consumer.
 > What is the URL for filtering by a tag?
 
-TODO: URL
+/?tag=tag_name
 
 > What query string parameters will you include in the URL?
 
-| Query String Parameter Name       | Description       |
-| --------------------------------- | ----------------- |
-| TODO: query string parameter name | TODO: description |
-|                                   |                   |
-|                                   |                   |
+| Query String Parameter Name       | Description                                |
+| --------------------------------- | -----------------                          |
+| tag                               | Name of tag/cuisine type to filter data by |
+|                                   |                                            |
+|                                   |                                            |
 
 
 ## Consumer: Details Page URL
 > Design the URL for the consumer's detail page.
 > What is the URL for the detail page?
 
-TODO: URL
+/reviews/rest_name?id=restaurant_id
 
 > What query string parameters will you include in the URL?
 
-| Query String Parameter Name       | Description       |
-| --------------------------------- | ----------------- |
-| TODO: query string parameter name | TODO: description |
-|                                   |                   |
-|                                   |                   |
+| Query String Parameter Name       | Description                                         |
+| --------------------------------- | -----------------                                   |
+| page                              | Page to display for consumer_entry for details page |
+| id                                | unique identifier for each restaurant               |
+|                                   |                                                     |
 
 
 ## Administrator: Filtering by Tag
 > Design the URL for filtering by a tag on the administrator's view all page.
 > What is the URL for filtering by a tag?
 
-TODO: URL
+/admin?tag=tag_name
 
 > What query string parameters will you include in the URL?
 
-| Query String Parameter Name       | Description       |
-| --------------------------------- | ----------------- |
-| TODO: query string parameter name | TODO: description |
-|                                   |                   |
-|                                   |                   |
+| Query String Parameter Name       | Description                           |
+| --------------------------------- | -----------------                     |
+| tag                               | Name of tag/cuisine type to filter by |
+|                                   |                                       |
+|                                   |                                       |
 
 
 ## Administrator: Edit Page URL
 > Design the URL for the administrator's edit page.
 > What is the URL for the administrator's edit page?
 
-TODO: URL
+/admin/edit?id=restaurant_id
 
 > What query string parameters will you include in the URL?
 
-| Query String Parameter Name       | Description       |
-| --------------------------------- | ----------------- |
-| TODO: query string parameter name | TODO: description |
-|                                   |                   |
-|                                   |                   |
+| Query String Parameter Name       | Description                             |
+| --------------------------------- | -----------------                       |
+| id                                | unique identifier of restaurant to edit |
+|                                   |                                         |
+|                                   |                                         |
 
 
 ## SQL Query Plan
 > Plan the SQL query to retrieve all entry records for a specific tag (i.e. tag 100).
 
 ```
-TODO: get all records for tag
+SELECT * FROM restaurants
+WHERE (tags.name = tag_name)
 ```
+
 
 > Plan the SQL query to retrieve a record (i.e. record 1). (Do not retrieve tags.)
 
 ```
-TODO: get one record
+SELECT * FROM restaurants
+WHERE id = :id;
 ```
 
 > Plan the SQL query to retrieve all tag names for record 1.
 
 ```
-TODO: get tag names for record
+SELECT * FROM restaurants
+WHERE id = 1;
 ```
 
 
@@ -93,7 +97,7 @@ TODO: get tag names for record
 ### Collaborators
 > List any persons you collaborated with on this project.
 
-TODO: list your collaborators
+n/a
 
 
 ### Reference Resources
@@ -102,7 +106,8 @@ TODO: list your collaborators
 >
 > Provide the URL to the resources you used and include a short description of how you used each resource.
 
-TODO: list reference resources
+- ChatGPT 5 <https://chatgpt.com>
+  - ChatGPT 5 was utilized to implement seed data for the database
 
 
 [← Table of Contents](design-journey.md)
