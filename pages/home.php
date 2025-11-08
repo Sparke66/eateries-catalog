@@ -1,5 +1,13 @@
 <?php
 
+const RATING_STARS = array(
+  1 => "★☆☆☆☆",
+  2 => "★★☆☆☆",
+  3 => "★★★☆☆",
+  4 => "★★★★☆",
+  5 => "★★★★★"
+);
+
 require_once "includes/init.php";
 
 $sql_select_query = "SELECT * FROM restaurants ORDER BY name;";
@@ -28,7 +36,7 @@ $records = exec_sql_query($db, $sql_select_query)->fetchAll();
     foreach ($records as $record) {
       $name = $record["name"];
       $address = $record["address"];
-      $rating = $record["rating"];
+      $rating = RATING_STARS[$record["rating"]];
       $avg_price = $record["avg_price"];
       $description = $record["description"];
 
