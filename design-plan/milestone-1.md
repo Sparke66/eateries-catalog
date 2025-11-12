@@ -170,13 +170,13 @@ There is clear distinction between the consumer and administrator routes, allowi
 **Table 2:** Tags (Cuisine Types)
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- cuisine_type: TEXT {Non-Null}
+- name: TEXT {Non-Null}
 
 **Table 3:** Restaurant_Tags (Junction Table)
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- rest_id: INTEGER {Foreign Key->Restaurants.id, Non-Null}
-- cuisine_id: TEXT {Foreign Key->cuisine_type.id, Non-Null}
+- restaurant_id: INTEGER {Foreign Key->Restaurants.id, Non-Null}
+- tag_id: TEXT {Foreign Key->cuisine_type.id, Non-Null}
 
 ## References
 
