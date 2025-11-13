@@ -1,3 +1,23 @@
 main.consumer .tags {
     background-color: aqua;
+    display: flex;
+}
+
+main.consumer .tags .tag {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+main.admin .tags {
+    background-color: pink;
+    display: flex;
+}
+
+main.admin .tags .tag {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+main .tile {
+    border: solid black;
 }

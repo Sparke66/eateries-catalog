@@ -8,6 +8,9 @@ const RATING_STARS = array(
   5 => "★★★★★"
 );
 
+// retrieve query string parameter for filtering
+$filter_param = $_GET["filter"] ?? NULL;
+
 // query the database for list of tags
 $sql_tag_query = "SELECT * FROM tags ORDER BY name";
 $tags = exec_sql_query($db, $sql_tag_query)->fetchAll();
@@ -20,57 +23,28 @@ INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
 INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
 $sql_filter_clause = ""; // No filter by default
 
+// note we can use the tag names directly for the filter parameters
 
-// TODO: complete the rest of this code
-if (in_array($filter_param, array("american", "chinese", "exquisite", "french", "gluten-free", "halal", "indian", "inexpensive", "italian", "japanese", "korean", "kosher", "mexican", "moderate", "thai", "vegan"))) {
-  if ($filter_param == "american") {
-    $sql_filter_field = " 'American' ";
-  } elseif ($filter_param == "chinese") {
-    $sql_filter_field = " 'Chinese' ";
-  } elseif ($filter_param == "exquisite") {
-    $sql_filter_field = " 'Exquisite' ";
-  } elseif ($filter_param == "french") {
-    $sql_filter_field = " 'French' ";
-  } elseif ($filter_param == "gluten_free") {
-    $sql_filter_field = " 'Gluten-Free' ";
-  } elseif ($filter_param == "halal") {
-    $sql_filter_field = " 'Halal' ";
-  } elseif ($filter_param == "indian") {
-    $sql_filter_field = " 'Indian' ";
-  } elseif ($filter_param == "inexpensive") {
-    $sql_filter_field = " 'Inexpensive' ";
-  } elseif ($filter_param == "italian") {
-    $sql_filter_field = " 'Italian' ";
-  } elseif ($filter_param == "japanese") {
-    $sql_filter_field = " 'Japanese' ";
-  } elseif ($filter_param == "korean") {
-    $sql_filter_field = " 'Korean' ";
-  } elseif ($filter_param == "kosher") {
-    $sql_filter_field = " 'Kosher' ";
-  } elseif ($filter_param == "mexican") {
-    $sql_filter_field = " 'Mexican' ";
-  } elseif ($filter_param == "moderate") {
-    $sql_filter_field = " 'Moderate' ";
-  } elseif ($filter_param == "thai") {
-    $sql_filter_field = " 'Thai' ";
-  } elseif ($filter_param == "vegan") {
-    $sql_filter_field = " 'Vegan' ";
-  }
+if ($filter_param) {
+  $sql_select_clause = "SELECT restaurants.*
+  FROM restaurants
+  INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
+  INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
+  $sql_filter_clause = " WHERE tags.name = '" . $filter_param . "'";
+
+  $sql_rest_query = $sql_select_clause . $sql_filter_clause;
+  $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
+} else {
+  $sql_rest_query = "SELECT * FROM restaurants ORDER BY name";
+  $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
 }
-
-$sql_filter_field = " 'Inexpensive' ";
-$sql_filter_clause = "WHERE tags.name = " . $sql_filter_field;
-
-// query the database for list of restaurants
-$sql_rest_query = $sql_select_clause . $sql_filter_clause;
-$restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 
-<!-- Will need to eventually turn this into a partial -->
+<!-- Will need to eventually turn this into a partial via meta.php -->
 
 <head>
   <meta charset="UTF-8">
@@ -92,38 +66,19 @@ $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
 
     <!-- Display the list of tags; may need to port over to partial -->
     <div class="tags">
+      <p> Select Cuisine Type: </p>
       <?php
       foreach ($tags as $tag) {
         $tag_name = $tag["name"];
       ?>
-      <a href="/?<?php echo http_build_query(array(
-        "filter" => $tag_name
-      ))
-        <p><?php echo htmlspecialchars($tag_name) ?></p>
+        <a href="/?<?php echo http_build_query(array(
+                      "filter" => $tag_name
+                    )); ?>">
+          <p class="tag"><?php echo htmlspecialchars($tag_name) ?></p>
+        </a>
       <?php
       }
       ?>
-
-      Filter By:
-      <a class
-
-        <!-- American
-        Chinese
-        Exquisite
-        French
-        Gluten-Free
-        Halal
-        Indian
-        Inexpensive
-        Italian
-        Japanese
-        Korean
-        Kosher
-        Mexican
-        Moderate
-        Thai
-        Vegan -->
-
 
     </div>
 
@@ -131,6 +86,7 @@ $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
       <?php
 
       foreach ($restaurants as $restaurant) {
+        $id = $restaurant["id"]; // added as reference for parameter to be passed
         $name = $restaurant["name"];
         $address = $restaurant["address"];
         $rating = RATING_STARS[$restaurant["rating"]];
