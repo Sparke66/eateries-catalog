@@ -8,8 +8,6 @@ const RATING_STARS = array(
     5 => "★★★★★"
 );
 
-require_once "includes/init.php";
-
 // query the database for list of tags
 $sql_tag_query = "SELECT * FROM tags ORDER BY name;";
 $tags = exec_sql_query($db, $sql_tag_query)->fetchAll();

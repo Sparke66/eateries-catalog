@@ -2,7 +2,7 @@
 
 <div class="tile">
     <figure>
-        <img src="/public/images/placeholder.jpg" alt="Placeholder" />
+        <img src="/images/placeholder.jpg" alt="Placeholder" />
         <figcaption>Placeholder Image</figcaption>
     </figure>
     <h3><?php echo htmlspecialchars($name) ?></h3>
