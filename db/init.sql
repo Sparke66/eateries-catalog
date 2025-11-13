@@ -3,7 +3,7 @@
 --
 -- TODO: entries, tags, and entry_tags table schemas
 -- TODO: seed data
-DROP TABLE IF EXISTS "course_requests";
+DROP TABLE IF EXISTS "restaurants";
 
 CREATE TABLE "restaurants" (
     "id" INTEGER NOT NULL UNIQUE,

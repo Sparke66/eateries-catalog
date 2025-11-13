@@ -17,7 +17,7 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 
 - TODO: file type
 - ...
-
+When users complete a form to add a restaurant to the website, they will be allowed to upload one image. They will, tentatively, only be allowed to upload images with the jpeg extension (will need to explore png and svg and other formats).
 
 ## File Upload - Updated DB Schema
 > Plan any updates you need to make to your database schema to support file uploads.
