@@ -22,9 +22,39 @@ $sql_filter_clause = ""; // No filter by default
 
 
 // TODO: complete the rest of this code
-if (in_array($filter_param, array("american", "chinese", "exquisite", "french", "gluten_free", "halal", "indian", "inexpensive", "italian", "japanese", "korean", "kosher", "mexican", "moderate", "thai", "vegan"))) {
+if (in_array($filter_param, array("american", "chinese", "exquisite", "french", "gluten-free", "halal", "indian", "inexpensive", "italian", "japanese", "korean", "kosher", "mexican", "moderate", "thai", "vegan"))) {
   if ($filter_param == "american") {
-    $sql_filter_field = "american";
+    $sql_filter_field = " 'American' ";
+  } elseif ($filter_param == "chinese") {
+    $sql_filter_field = " 'Chinese' ";
+  } elseif ($filter_param == "exquisite") {
+    $sql_filter_field = " 'Exquisite' ";
+  } elseif ($filter_param == "french") {
+    $sql_filter_field = " 'French' ";
+  } elseif ($filter_param == "gluten_free") {
+    $sql_filter_field = " 'Gluten-Free' ";
+  } elseif ($filter_param == "halal") {
+    $sql_filter_field = " 'Halal' ";
+  } elseif ($filter_param == "indian") {
+    $sql_filter_field = " 'Indian' ";
+  } elseif ($filter_param == "inexpensive") {
+    $sql_filter_field = " 'Inexpensive' ";
+  } elseif ($filter_param == "italian") {
+    $sql_filter_field = " 'Italian' ";
+  } elseif ($filter_param == "japanese") {
+    $sql_filter_field = " 'Japanese' ";
+  } elseif ($filter_param == "korean") {
+    $sql_filter_field = " 'Korean' ";
+  } elseif ($filter_param == "kosher") {
+    $sql_filter_field = " 'Kosher' ";
+  } elseif ($filter_param == "mexican") {
+    $sql_filter_field = " 'Mexican' ";
+  } elseif ($filter_param == "moderate") {
+    $sql_filter_field = " 'Moderate' ";
+  } elseif ($filter_param == "thai") {
+    $sql_filter_field = " 'Thai' ";
+  } elseif ($filter_param == "vegan") {
+    $sql_filter_field = " 'Vegan' ";
   }
 }
 
@@ -65,15 +95,17 @@ $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
       <?php
       foreach ($tags as $tag) {
         $tag_name = $tag["name"];
-
       ?>
+      <a href="/?<?php echo http_build_query(array(
+        "filter" => $tag_name
+      ))
         <p><?php echo htmlspecialchars($tag_name) ?></p>
       <?php
       }
       ?>
 
       Filter By:
-      <a
+      <a class
 
         <!-- American
         Chinese
