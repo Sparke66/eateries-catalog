@@ -15,16 +15,8 @@ $filter_param = $_GET["filter"] ?? NULL;
 $sql_tag_query = "SELECT * FROM tags ORDER BY name";
 $tags = exec_sql_query($db, $sql_tag_query)->fetchAll();
 
-// building the restaurant query
-// is this even the proper way?
-$sql_select_clause = "SELECT restaurants.*
-FROM restaurants
-INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
-INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
-$sql_filter_clause = ""; // No filter by default
-
 // note we can use the tag names directly for the filter parameters
-
+// conditionally building the restaurant query
 if ($filter_param) {
   $sql_select_clause = "SELECT restaurants.*
   FROM restaurants

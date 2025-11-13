@@ -12,7 +12,7 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 > Design the URL for filtering by a tag on the view all page for the consumer.
 > What is the URL for filtering by a tag?
 
-/?tag=tag_name
+/?filter=tag_name
 
 > What query string parameters will you include in the URL?
 
@@ -42,7 +42,7 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 > Design the URL for filtering by a tag on the administrator's view all page.
 > What is the URL for filtering by a tag?
 
-/admin?tag=tag_name
+/admin?Filter=tag_name
 
 > What query string parameters will you include in the URL?
 
@@ -73,6 +73,8 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 
 ```
 SELECT * FROM restaurants
+JOIN restaurants & restaurant_tags through restaurant id
+JOIN tags & restaurant_tags through tag id
 WHERE (tags.name = tag_name)
 ```
 

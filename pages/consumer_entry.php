@@ -8,15 +8,12 @@ const RATING_STARS = array(
     5 => "★★★★★"
 );
 
-// TODO: change to make the query based on what was passed
-
 // retrieve query string parameter for filtering
 $restaurant_id = $_GET["id"] ?? NULL;
 
 // query the database for the restaurant record
 $sql_rest_query = "SELECT * FROM restaurants WHERE id = :id";
 $restaurant = exec_sql_query($db, $sql_rest_query, array(':id' => $restaurant_id))->fetch();
-// TODO: need to ask about this
 
 
 // Get all tags for this restaurant
@@ -45,7 +42,7 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
 
 <body>
 
-    <main class="admin">
+    <main class="consumer">
         <!-- Administrator Page shall be implemented for wide screen -->
 
         <h1>Ithaca Eateries Catalog</h1>
@@ -63,8 +60,6 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
             $description = $restaurant["description"];
             ?>
 
-
-            // TODO: change
             <div class="restaurant-details">
                 <figure>
                     <img src="/images/placeholder.jpg" alt="Restaurant Image" />

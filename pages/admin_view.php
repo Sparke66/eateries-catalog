@@ -12,26 +12,24 @@ const RATING_STARS = array(
 $filter_param = $_GET["filter"] ?? NULL;
 
 // query the database for list of tags
-$sql_tag_query = "SELECT * FROM tags ORDER BY name;";
+$sql_tag_query = "SELECT * FROM tags ORDER BY name";
 $tags = exec_sql_query($db, $sql_tag_query)->fetchAll();
 
-// building the restaurant query
-// is this even the proper way?
-$sql_select_clause = "SELECT restaurants.*
-FROM restaurants
-INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
-INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
-$sql_filter_clause = ""; // No filter by default
-
-
 // note we can use the tag names directly for the filter parameters
+// conditionally building the restaurant query
 if ($filter_param) {
+    $sql_select_clause = "SELECT restaurants.*
+  FROM restaurants
+  INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
+  INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
     $sql_filter_clause = " WHERE tags.name = '" . $filter_param . "'";
-}
 
-// query the database for list of restaurants
-$sql_rest_query = $sql_select_clause . $sql_filter_clause;
-$restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
+    $sql_rest_query = $sql_select_clause . $sql_filter_clause;
+    $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
+} else {
+    $sql_rest_query = "SELECT * FROM restaurants ORDER BY name";
+    $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
+}
 
 ?>
 <!DOCTYPE html>
@@ -65,9 +63,9 @@ $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
             foreach ($tags as $tag) {
                 $tag_name = $tag["name"];
             ?>
-                <a href="/?<?php echo http_build_query(array(
-                                "filter" => $tag_name
-                            )); ?>">
+                <a href="/admin?<?php echo http_build_query(array(
+                                    "filter" => $tag_name
+                                )); ?>">
                     <p class="tag"><?php echo htmlspecialchars($tag_name) ?></p>
                 </a>
             <?php
@@ -89,7 +87,7 @@ $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
                 $description = $restaurant["description"];
 
                 // insert partials for individual eateries
-                include "includes/restaurant-tile.php";
+                include "includes/admin-restaurant-tile.php";
             }
 
             ?>
