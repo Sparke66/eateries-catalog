@@ -31,6 +31,8 @@ $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
 
 <body>
 
+  <!-- Consumer Page shall be implemented for narrow screen -->
+
   <h1>Ithaca Eateries Catalog</h1>
 
   <!-- Display the list of tags; may need to port over to partial -->

@@ -75,8 +75,6 @@ Source: ChatGPT 5
 
 - ChatGPT 5 was utilized to explore the background and goals of the administrator audience.
 
-TODO: Tips: think of administrator as a voluntary contributor (ie. wikipedia, fandom, etc.)
-
 The administrator audience comprise of longer-term residents of the Ithaca/Tompkins County area who are deeply familiar with the local dining scene and take pride in sharing their culinary insights with others.
 
 > Be specific and justify why this audience is a **cohesive** group. (1-2 sentences)
@@ -126,13 +124,18 @@ Morgan will access this website from a wide screen for the more comprehensive ta
 > Provide a brief explanation _underneath_ each sketch. (1 sentence per sketch)
 > **Refer to consumer or administrator persona by name in each explanation.**
 
-TODO: sketch(es) + explanation
+![image](/design-plan/admin_design.jpg)
 
+View all page for Morgan
+
+![image](/design-plan/consumer_design.jpg)
+
+View all page for Alex
 
 ## Catalog Design Patterns
 > Explain how your design employs common catalog design patterns. (1-2 sentences)
 
-TODO: design pattern explanation
+The catalog design makes use of tiles to represent each restaurant and show its corresponding information.
 
 
 ## URL Design
@@ -175,8 +178,8 @@ There is clear distinction between the consumer and administrator routes, allowi
 **Table 3:** Restaurant_Tags (Junction Table)
 
 - id: INTEGER {Primary Key, Auto-Increment, Unique, Non-Null}
-- restaurant_id: INTEGER {Foreign Key->Restaurants.id, Non-Null}
-- tag_id: TEXT {Foreign Key->cuisine_type.id, Non-Null}
+- restaurant_id: INTEGER {Foreign Key->restaurants.id, Non-Null}
+- tag_id: TEXT {Foreign Key->tags.id, Non-Null}
 
 ## References
 
@@ -194,6 +197,7 @@ n/a
 
 - ChatGPT 5 <https://chatgpt.com>
   - ChatGPT 5 was utilized to explore audience and administrator goals for the website, and for image generation of the corresponding personas.
-
+- Stack Overflow Image <https://i.sstatic.net/y9DpT.jpg>
+  - this image was utilized as placeholder for Milestone 1 requirements.
 
 [← Table of Contents](design-journey.md)
