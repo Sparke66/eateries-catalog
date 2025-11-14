@@ -1,6 +1,5 @@
 <?php
 // open_sqlite_db() removed. Use init_sqlite_db() instead.
-// Do not copy open_sqlite_db() into this assignment.
 
 // Open a connection to an SQLite database stored in filename: $db_filename.
 // If database does not exists, will execute .sql file from $init_sql_filename
@@ -29,7 +28,7 @@ function init_sqlite_db($db_filename, $init_sql_filename)
 
   // If the database exists, but no checksum file exists, then we have a consistency problem with the DB.
   if (file_exists($db_filename) && !file_exists($init_checksum_filename)) {
-    throw new Exception("No checksum for existing database. Please regenerate your database (delete .sqlite file).");
+    throw new Exception("No checksum for existing database. Regenerate your database (delete .sqlite file).");
   }
 
   // Get the existing checksum and compare it the init checksum.
@@ -37,7 +36,7 @@ function init_sqlite_db($db_filename, $init_sql_filename)
     $current_checksum = file_get_contents($init_checksum_filename);
 
     if ($init_checksum != $current_checksum) {
-      throw new Exception("Database initialization script has changed. Please regenerate your database (delete " . $db_filename . ").");
+      throw new Exception("Database initialization script has changed. Regenerate your database (delete " . $db_filename . ").");
     }
   }
 
