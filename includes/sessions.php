@@ -334,7 +334,7 @@ function create_account($db, $name, $username, $password, $password_confirmation
   // check if username is unique, give error message if not.
   if (empty($username)) {
     $account_valid = False;
-    array_push($signup_messages, "Please provide a username.");
+    array_push($signup_messages, "Provide a username.");
   } else {
     $records = exec_sql_query(
       $db,
@@ -345,20 +345,20 @@ function create_account($db, $name, $username, $password, $password_confirmation
     )->fetchAll();
     if (count($records) > 0) {
       $account_valid = False;
-      array_push($signup_messages, "Username is already taken, please pick another username.");
+      array_push($signup_messages, "Username is already taken, pick another username.");
     }
   }
 
   // TODO: check if password meets security requirements.
   if (empty($password)) {
     $account_valid = False;
-    array_push($signup_messages, "Please provide a password.");
+    array_push($signup_messages, "Provide a password.");
   }
 
   // Check if passwords match
   if ($password != $password_confirmation) {
     $account_valid = False;
-    array_push($signup_messages, "Password confirmation doesn't match your password. Please reenter your password.");
+    array_push($signup_messages, "Password confirmation doesn't match your password. Reenter your password.");
   } else {
     // hash the password
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -378,7 +378,7 @@ function create_account($db, $name, $username, $password, $password_confirmation
       // account creation was successful. Login.
       password_login($db, $messages, $username, $password);
     } else {
-      array_push($messages, "Password confirmation doesn't match your password. Please reenter your password.");
+      array_push($messages, "Password confirmation doesn't match your password. Reenter your password.");
     }
   }
 
