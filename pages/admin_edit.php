@@ -1,16 +1,84 @@
 <?php
 
-// Admin Form, do not need key value coding for ratings
-/* const RATING_STARS = array(
-    1 => "★☆☆☆☆",
-    2 => "★★☆☆☆",
-    3 => "★★★☆☆",
-    4 => "★★★★☆",
-    5 => "★★★★★"
-); */
+// NOTE: do not need to implement form validation, sticky forms, and corrective feedback
+// DO NEED to display error message if insert/update query fails
 
-// retrieve query string parameter for filtering
-$restaurant_id = $_GET["id"] ?? NULL;
+
+$error_message = "";                    // Initialize error message
+$restaurant_id = $_GET["id"] ?? NULL;   // retrieve query string parameter for filtering
+
+if (isset($_POST["edit-restaurant"])) {
+    // Get the form data
+    $restaurant_id = $_POST['id'];
+    $name = $_POST['name'];
+    $address = $_POST['address'];
+    $rating = $_POST['rating'];
+    $avg_price = $_POST['avg_price'];
+    $description = $_POST['description'];
+    // Handle file upload
+    $upload_file = $_FILES['restaurant-image'];
+
+    try {
+        // If updating with new image
+        if ($upload_file["error"] == UPLOAD_ERR_OK) {
+            // Extract file information
+            $file_name = basename($upload_file['name']);
+            $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+            $result = exec_sql_query(
+                $db,
+                "UPDATE restaurants SET name = :name,
+                                    address = :address,
+                                    rating = :rating,
+                                    avg_price = :avg_price,
+                                    description = :description,
+                                    file_ext = :file_ext
+                                WHERE id = :id;",
+                array(
+                    // Note: UPDATE queries require id field to specify which record to update
+                    ":id" => $restaurant_id,
+                    ":name" => $name,
+                    ":address" => $address,
+                    ":rating" => $rating,
+                    ":avg_price" => $avg_price,
+                    ":description" => $description,
+                    ":file_ext" => $file_ext
+                )
+            );
+
+            $upload_path = "public/uploads/restaurants/" . $restaurant_id . "." . $file_ext;
+            move_uploaded_file($upload_file['tmp_name'], $upload_path);
+        }
+
+
+        // If not updating with new image
+        else {
+            $result = exec_sql_query(
+                $db,
+                "UPDATE restaurants SET name = :name,
+                                    address = :address,
+                                    rating = :rating,
+                                    avg_price = :avg_price,
+                                    description = :description
+                                WHERE id = :id;",
+                array(
+                    // Note: UPDATE queries require id field to specify which record to update
+                    ":id" => $restaurant_id,
+                    ":name" => $name,
+                    ":address" => $address,
+                    ":rating" => $rating,
+                    ":avg_price" => $avg_price,
+                    ":description" => $description
+                )
+            );
+        }
+
+        header("Location: /admin");
+        exit;
+    } catch (PDOException $exception) {
+        $error_message = "Failed to update restaurant. Please try again.";
+    }
+}
 
 // query the database for the restaurant record
 $sql_rest_query = "SELECT * FROM restaurants WHERE id = :id";
@@ -59,9 +127,10 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
             $description = $restaurant["description"];
             ?>
 
-            <!-- Will implement image functionality in the future -->
+            <?php $file_ext = $restaurant["file_ext"] ?>
             <figure>
-                <img src="/images/placeholder.jpg" alt="Restaurant Image" />
+                <img src="/public/uploads/restaurants/<?php echo $id . '.' . htmlspecialchars($file_ext); ?>" alt="<?php echo htmlspecialchars($name); ?>" />
+                <figcaption>Placeholder Image</figcaption>
             </figure>
 
             <!--
@@ -74,36 +143,38 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
                 - Description
             -->
             <!-- Will need to add form functionality in the future -->
-            <form>
+            <form method="post" enctype="multipart/form-data">
+                <!-- restaurant ID field is hidden -->
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
                 <label for="name">Restaurant Name: </label>
                 <input type="text" name="name" id="name"
                     value="<?php echo htmlspecialchars($name) ?>">
 
-                <!-- Will implement image upload in the future -->
-                <!-- <label for ="image">Image: </label>
-                <input type="image" name="image" id="image"
-                        value=""> -->
-
                 <label for="address">Address: </label>
                 <input type="text" name="address" id="address"
                     value="<?php echo htmlspecialchars($address) ?>">
+
                 <label for="rating">Rating: </label>
                 <input type="number" name="rating" id="rating"
                     value="<?php echo htmlspecialchars($rating) ?>">
+
                 <label for="avg_price">Average Price: </label>
                 <input type="number" name="avg_price" id="avg_price"
                     value="<?php echo htmlspecialchars($avg_price) ?>">
-                <label for="description">Description: </label>
 
-                <!-- Need to explore textarea for longer blocks of text -->
-                <input type="text" name="description" id="description"
-                    value="<?php echo htmlspecialchars($description) ?>">
+                <label for="description">Description: </label>
+                <!-- Source: Mozilla Reference Documentation -->
+                <textarea name="description" id="description" rows="3"> <?php echo htmlspecialchars($description) ?> </textarea>
+
+                <label for="restaurant-image">Image: </label>
+                <input type="file" name="restaurant-image" id="restaurant-image" accept=".jpeg, .jpg, .png">
+                <p>uploading new image is optional</p>
 
                 <!-- Will implement form submission functionality in future -->
-                <!-- <button type="submit">
+                <button type="submit" name="edit-restaurant">
                     Save Changes
-                </button> -->
+                </button>
 
             </form>
 
@@ -113,11 +184,8 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
                     <li><?php echo htmlspecialchars($tag["name"]); ?></li>
                 <?php } ?>
             </ul>
-
-
         </div>
     </main>
-
 </body>
 
 </html>

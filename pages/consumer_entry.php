@@ -61,8 +61,10 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
             ?>
 
             <div class="restaurant-details">
+                <?php $file_ext = $restaurant["file_ext"] ?>
                 <figure>
-                    <img src="/images/placeholder.jpg" alt="Restaurant Image" />
+                    <img src="/public/uploads/restaurants/<?php echo $id . '.' . htmlspecialchars($file_ext); ?>" alt="<?php echo htmlspecialchars($name); ?>" />
+                    <figcaption>Placeholder Image</figcaption>
                 </figure>
                 <h2><?php echo htmlspecialchars($name); ?></h2>
                 <p><strong>Address:</strong> <?php echo htmlspecialchars($address); ?></p>

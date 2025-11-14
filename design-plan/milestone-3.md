@@ -15,9 +15,7 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 > Or can users upload different types of files?
 > List the file extensions of the types of files your users may upload.
 
-- TODO: file type
-- ...
-When users complete a form to add a restaurant to the website, they will be allowed to upload one image. They will, tentatively, only be allowed to upload images with the jpeg extension (will need to explore png and svg and other formats).
+When users complete a form to add a restaurant to the website, they will be allowed to upload one image. They will, tentatively, only be allowed to upload images with the jpeg, jpg, and png extensions.
 
 ## File Upload - Updated DB Schema
 > Plan any updates you need to make to your database schema to support file uploads.
@@ -26,10 +24,19 @@ When users complete a form to add a restaurant to the website, they will be allo
 > 2. Modify the schema to include any file upload information you desire to store in your database.
 >    If you don't need to modify anything, explain why.
 
-TODO: entries table name
+entries table name: restaurants
 
 ```
-TODO: updated _entries_ schema
+CREATE TABLE "restaurants" (
+    "id" INTEGER NOT NULL UNIQUE,
+    "name" TEXT UNIQUE NOT NULL,
+    "address" TEXT UNIQUE NOT NULL,
+    "rating" INTEGER,
+    "avg_price" INTEGER,
+    "description" TEXT,
+    "file_ext" TEXT NOT NULL,
+    PRIMARY KEY ("id" AUTOINCREMENT)
+);
 ```
 
 
@@ -37,8 +44,7 @@ TODO: updated _entries_ schema
 > Plan the file path to store the uploaded files on the server's file system.
 > Store the uploaded files in a subfolder of the `public/uploads` folder using the _entries_ table name as the subfolder name.
 
-TODO: file path to store uploaded media files for entries
-
+public/uploads/restaurants
 
 
 ## File Upload - Path and URL
@@ -51,14 +57,14 @@ TODO: file path to store uploaded media files for entries
 **File System Storage Path:**
 
 ```
-TODO: file path
+public/uploads/restaurants/154.jpeg
 ```
 
 **Resource URL:**
 
 ```
 <picture>
-  <img src="TODO: uploaded file URL">
+  <img src="public/uploads/restaurants/154.jpeg">
 </picture>
 ```
 
@@ -68,7 +74,7 @@ TODO: file path
 > Limit the types of files that a user may upload.
 
 ```html
-TODO: file input element
+<input id="restaurant-image" type="file" name="restaurant-image" accept=".jpeg, .jpg, .png">
 ```
 
 
@@ -81,7 +87,10 @@ TODO: file input element
 > Hint: <https://www.php.net/manual/en/features.file-upload.post-method.php>
 
 ```
-$_FILES[TODO: file parameter name][TODO: file data]
+$_FILES['jpeg-file']['name']
+$_FILES['jpeg-file']['tmp_name']
+$_FILES['jpeg-file']['size']
+$_FILES['jpeg-file']['error']
 ```
 
 
@@ -89,7 +98,8 @@ $_FILES[TODO: file parameter name][TODO: file data]
 > Plan your query to insert an entry in your catalog.
 
 ```sql
-TODO: INSERT query
+INSERT INTO restaurants (name, address, rating, avg_price, description, file_ext)
+VALUES (:name, :address, :rating, :avg_price, :description, :file_ext);
 ```
 
 
@@ -99,17 +109,28 @@ TODO: INSERT query
 
 **Sample Insert Data:**
 
-  - TODO: Field: Value
-  - ...
+- name: The Golden Spoon
+- address: 445 Triphammer Rd
+- rating: 4
+- avg_price: 22
+- description: A cozy Mediterranean restaurant featuring fresh seafood and grilled dishes with a beautiful waterfront view.
+- file_ext: png
 
-**Sample Upload File:** `design-plan/TODO: sample file name`
+**Sample Upload File:** `design-plan/golden-spoon.png`
 
 
 ## Edit Form - UPDATE query
 > Plan your query to update an entry in your catalog.
 
 ```sql
-TODO: UPDATE query
+UPDATE restaurants
+SET name = :name,
+    address = :address,
+    rating = :rating,
+    avg_price = :avg_price,
+    description = :description,
+    file_ext = :file_ext
+WHERE id = :id;
 ```
 
 
@@ -119,10 +140,15 @@ TODO: UPDATE query
 
 **Sample Edit Data:**
 
-  - TODO: Field: Value
-  - ...
+- id: 1 (Pasta Palace)
+- name: Pasta Palace Ristorante
+- address: 123 Noodle St, Suite 5
+- rating: 5
+- avg_price: 25
+- description: Award-winning Italian cuisine with homemade pasta and wood-fired pizzas in an elegant setting.
+- file_ext: png
 
-**Sample Upload File:** `design-plan/TODO: sample file name`
+**Sample Upload File:** `design-plan/pasta-palace-updated.png`
 
 
 ## References
@@ -130,7 +156,7 @@ TODO: UPDATE query
 ### Collaborators
 > List any persons you collaborated with on this project.
 
-TODO: list your collaborators
+n/a
 
 
 ### Reference Resources
@@ -139,7 +165,9 @@ TODO: list your collaborators
 >
 > Provide the URL to the resources you used and include a short description of how you used each resource.
 
-TODO: list reference resources
-
+- ChatGPT 5 <https://chatgpt.com>
+  - ChatGPT 5 was utilized to fabricate storefront images for restaurant seed data
+- Mozilla Reference Documentation <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/textarea>
+  - Mozilla Documentation was utilized to explore ideas to handle larger blocks of text
 
 [← Table of Contents](design-journey.md)

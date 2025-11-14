@@ -12,6 +12,7 @@ CREATE TABLE "restaurants" (
     "rating" INTEGER,
     "avg_price" INTEGER,
     "description" TEXT,
+    "file_ext" TEXT NOT NULL,
     PRIMARY KEY ("id" AUTOINCREMENT)
 );
 
@@ -68,21 +69,22 @@ INSERT INTO
         "address",
         "rating",
         "avg_price",
-        "description"
+        "description",
+        "file_ext"
     )
 VALUES
-    ('Pasta Palace','123 Noodle St',5,20,'Authentic Italian cuisine with a modern twist.'),
-    ('Sushi Central','456 Fish Ave',4,30,'Fresh sushi and sashimi prepared by expert chefs.'),
-    ('Curry Corner','789 Spice Rd',5,15,'Delicious Indian curries and tandoori dishes.'),
-    ('Taco Town','321 Fiesta Blvd',4,10,'Tasty Mexican street food in a casual setting.'),
-    ('Baguette Bistro','654 Bread Ln',5,25,'Classic French dishes with a cozy atmosphere.'),
-    ('Dragon Wok','88 Commons Ave',4,12,'Affordable Chinese takeout with generous portions.'),
-    ('Kimchi House','200 College Ave',5,18,'Traditional Korean BBQ and authentic flavors.'),
-    ('Spice of Bangkok','155 Cayuga St',4,16,'Authentic Thai dishes with adjustable spice levels.'),
-    ('La Trattoria','301 Stewart Ave',5,35,'Upscale Italian dining with homemade pasta.'),
-    ('The Burger Joint','99 Dryden Rd',3,8,'Quick American burgers and fries for students on the go.'),
-    ('Samosa Palace','176 Fall Creek Dr',4,11,'Indian street food specializing in vegetarian options.'),
-    ('Zen Garden','222 Eddy St',5,28,'Fine Japanese cuisine with traditional tea service.');
+    ('Pasta Palace','123 Noodle St',5,20,'Authentic Italian cuisine with a modern twist.','png'),
+    ('Sushi Central','456 Fish Ave',4,30,'Fresh sushi and sashimi prepared by expert chefs.','png'),
+    ('Curry Corner','789 Spice Rd',5,15,'Delicious Indian curries and tandoori dishes.','png'),
+    ('Taco Town','321 Fiesta Blvd',4,10,'Tasty Mexican street food in a casual setting.','png'),
+    ('Baguette Bistro','654 Bread Ln',5,25,'Classic French dishes with a cozy atmosphere.','png'),
+    ('Dragon Wok','88 Commons Ave',4,12,'Affordable Chinese takeout with generous portions.','png'),
+    ('Kimchi House','200 College Ave',5,18,'Traditional Korean BBQ and authentic flavors.','png'),
+    ('Spice of Bangkok','155 Cayuga St',4,16,'Authentic Thai dishes with adjustable spice levels.','png'),
+    ('La Trattoria','301 Stewart Ave',5,35,'Upscale Italian dining with homemade pasta.','png'),
+    ('The Burger Joint','99 Dryden Rd',3,8,'Quick American burgers and fries for students on the go.','png'),
+    ('Samosa Palace','176 Fall Creek Dr',4,11,'Indian street food specializing in vegetarian options.','png'),
+    ('Zen Garden','222 Eddy St',5,28,'Fine Japanese cuisine with traditional tea service.','png');
 
 INSERT INTO
     "restaurant_tags" ("restaurant_id", "tag_id")
