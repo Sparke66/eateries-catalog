@@ -1,23 +1,81 @@
-main.consumer .tags {
+html {
+    font-family: san-serif;
+    background-color: rgb(255, 242, 182);
+}
+
+.tags {
     background-color: aqua;
     display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0;
+    margin-bottom: 15px;
 }
 
-main.consumer .tags .tag {
-    margin-left: 5px;
-    margin-right: 5px;
+.tag {
+    padding: 5px 15px;
+    border-radius: 25px;
+    font-size: 16px;
 }
 
-main.admin .tags {
+aside.admin-tags .tags {
     background-color: pink;
     display: flex;
 }
 
-main.admin .tags .tag {
+aside.admin-tags .tags a .tag {
     margin-left: 5px;
     margin-right: 5px;
 }
 
 main .tile {
     border: solid black;
+}
+
+.admin-aside-main {
+    display: flex;
+}
+
+.admin-tile {
+    border: solid red;
+    display: flex;
+}
+
+.admin-tile figure img {
+    width: 150px;
+    height: 100px;
+}
+
+.tile {
+    border: solid red;
+}
+
+.tile figure img {
+    width: 300px;
+    height: 200px;
+}
+
+img.edit-button {
+    width: 50px;
+}
+
+select {
+  height: 200px;
+}
+
+textarea {
+    width: 300px;
+}
+
+body {
+    line-height: 1.6;
+    background-color: #ffc9c9;
+    margin: 0;
+    padding: 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
 }

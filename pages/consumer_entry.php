@@ -33,7 +33,7 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Administrator Portal</title>
+    <title> Restaurant Information </title>
 
     <link rel="stylesheet" type="text/css" href="/styles/site.css">
 </head>
@@ -47,6 +47,9 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
 
         <h1>Ithaca Eateries Catalog</h1>
         <h2>Restaurant Information</h2>
+
+        <p> Return to homepage:</p>
+        <a href="/"> Return Consumer Home</a>
 
         <div class="catalog">
             <h3>List of Restaurants</h3>

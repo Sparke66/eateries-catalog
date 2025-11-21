@@ -11,7 +11,7 @@ You can use bullet points and lists, or full paragraphs, or a combo, whichever i
 ## Self-Reflection
 > Reflect on what you learned during this assignment. How have you improved from the previous project? What would you do differently next time? (2-3 sentences)
 
-TODO: reflection
+This assignment taught me a lot of powerful skillsets, which includes adding new entries, deleting entries, sorting entries, and particularly login/logout as an extra deterrent for unwanted visitors to restricted areas. What I would do differently in the future would be to prioritizing implementation and optimization through each step of my projects.
 
 
 ## Grading: User Accounts
@@ -20,20 +20,20 @@ TODO: reflection
 
 **Administrator User:**
 
-- Username: TODO: username
-- Password: TODO: password
+- Username: admin
+- Password: monkey
 
 
 ## Grading: Screen Size
 > When we grade your final site, should we grade this with a narrow or wide screen?
 
-TODO: screen size
+This site is best graded on a wide screen
 
 
 ## Grading: Comments (Optional)
 > Is there anything we should know when grading your project? (max 2 sentences)
 
-TODO: (optional) comments
+n/a
 
 
 ## References
@@ -41,7 +41,7 @@ TODO: (optional) comments
 ### Collaborators
 > List any persons you collaborated with on this project.
 
-TODO: list your collaborators
+n/a
 
 
 ### Reference Resources
@@ -50,7 +50,9 @@ TODO: list your collaborators
 >
 > Provide the URL to the resources you used and include a short description of how you used each resource.
 
-TODO: list reference resources
-
-
+- SVGREPO <https://www.svgrepo.com/svg/75500/edit-button>
+  - Vector image was utilized for Edit Icon for admin pages
+- Mozilla Reference Documentation
+  - <https://developer.mozilla.org/en-US/docs/Web/HTML/Reference>
+    - utilized to review documentation for various HTTP elements & concepts for implementations
 [← Table of Contents](design-journey.md)

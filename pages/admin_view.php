@@ -1,5 +1,12 @@
 <?php
 
+// Checks if user is logged in; implement for every admin page
+if (!is_user_logged_in()) {
+    // Not logged in - redirect to login page
+    header("Location: /login");
+    exit;
+}
+
 const RATING_STARS = array(
     1 => "★☆☆☆☆",
     2 => "★★☆☆☆",
@@ -33,7 +40,8 @@ if ($filter_param) {
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<!-- Handle CSS styling separately for admin pages -->
+<html class="admin-page" lang="en">
 
 <!-- Will need to eventually turn this into a partial via meta.php -->
 
@@ -49,15 +57,30 @@ if ($filter_param) {
 <?php include("includes/meta.php") ?>
 
 <body>
-
-    <main class="admin">
-        <!-- Administrator Page shall be implemented for wide screen -->
-
+    <!-- Header consists of the Website Title, Portal Identification, Login/Logout Controls, and List of Tags -->
+    <header class="admin-header">
         <h1>Ithaca Eateries Catalog</h1>
-        <h2>Administrator Portal</h2>
+        <div class="header-middle">
+            <h2>Administrator Portal</h2>
 
-        <!-- Display the list of tags; may need to port over to partial -->
-        <div class="tags">
+            <div class="admin-login">
+                <?php if (is_user_logged_in()): ?>
+                    <!-- User IS logged in - show logout -->
+                    <form method="POST">
+                        <button type="submit" name="logout">Logout</button>
+                    </form>
+                    <!-- Note: User redirected to login page if not logged in
+                    Login form not implemented. -->
+                <?php endif; ?>
+            </div>
+
+        </div>
+
+    </header>
+
+    <div class="admin-aside-main">
+        <aside class="admin-tags">
+            <!-- Display the list of tags; may need to port over to partial -->
             <p> Select Cuisine Type: </p>
             <?php
             foreach ($tags as $tag) {
@@ -71,28 +94,34 @@ if ($filter_param) {
             <?php
             }
             ?>
+        </aside>
 
-        </div>
+        <main class="admin">
+            <!-- Administrator Page shall be implemented for wide screen -->
 
-        <div class="catalog">
-            <h3>List of Restaurants</h3>
-            <?php
+            <a href="/admin/entry"> Add New Restaurant</a>
 
-            foreach ($restaurants as $restaurant) {
-                $id = $restaurant["id"]; // added as reference for parameter to be passed
-                $name = $restaurant["name"];
-                $address = $restaurant["address"];
-                $rating = RATING_STARS[$restaurant["rating"]];
-                $avg_price = $restaurant["avg_price"];
-                $description = $restaurant["description"];
+            <div class="catalog">
+                <h3>List of Restaurants</h3>
+                <?php
 
-                // insert partials for individual eateries
-                include "includes/admin-restaurant-tile.php";
-            }
+                foreach ($restaurants as $restaurant) {
+                    $id = $restaurant["id"]; // added as reference for parameter to be passed
+                    $name = $restaurant["name"];
+                    $address = $restaurant["address"];
+                    $rating = RATING_STARS[$restaurant["rating"]];
+                    $avg_price = $restaurant["avg_price"];
+                    $description = $restaurant["description"];
 
-            ?>
-        </div>
-    </main>
+                    // insert partials for individual eateries
+                    include "includes/admin-restaurant-tile.php";
+                }
+
+                ?>
+            </div>
+        </main>
+    </div>
+
 
 </body>
 

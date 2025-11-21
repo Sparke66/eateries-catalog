@@ -1,12 +1,17 @@
 <?php
 
-// NOTE: do not need to implement form validation, sticky forms, and corrective feedback
-// DO NEED to display error message if insert/update query fails
-
+// Checks if user is logged in; implement for every admin page
+if (!is_user_logged_in()) {
+    // Not logged in - redirect to login page
+    header("Location: /login");
+    exit;
+}
 
 $error_message = "";                    // Initialize error message
+
 $restaurant_id = $_GET["id"] ?? NULL;   // retrieve query string parameter for filtering
 
+// validate form for editing restaurant
 if (isset($_POST["edit-restaurant"])) {
     // Get the form data
     $restaurant_id = $_POST['id'];
@@ -73,11 +78,77 @@ if (isset($_POST["edit-restaurant"])) {
             );
         }
 
-        header("Location: /admin");
+        // validate form for editing tags
+        if (isset($_POST['tags'])) {
+            // First, remove all existing tags for this restaurant
+            $result = exec_sql_query(
+                $db,
+                "DELETE FROM restaurant_tags
+                    WHERE restaurant_id = :id",
+                array(':id' => $restaurant_id)
+            );
+
+            // Then, insert the newly selected tags
+            foreach ($_POST['tags'] as $tag_id) {
+                $result = exec_sql_query(
+                    $db,
+                    "INSERT INTO restaurant_tags (restaurant_id, tag_id)
+                        VALUES (:restaurant_id, :tag_id)",
+                    array(
+                        ':restaurant_id' => $restaurant_id,
+                        ':tag_id' => $tag_id
+                    )
+                );
+            }
+        }
+
+
+
+
+        header("Location: /admin/edit?id=" . $restaurant_id);
         exit;
     } catch (PDOException $exception) {
-        $error_message = "Failed to update restaurant. Please try again.";
+        $error_message = "Failed to update restaurant.";
     }
+}
+
+
+
+// validate form for restaurant deletion
+if (isset($_POST['delete-confirmed'])) {
+    $restaurant_id = $_POST['restaurant_id'];
+
+    // Optional: Delete the image file
+    $restaurant = exec_sql_query(
+        $db,
+        "SELECT file_ext FROM restaurants WHERE id = :id",
+        array(':id' => $restaurant_id)
+    )->fetch();
+
+    // Delete the restaurant's tags first (foreign key constraint)
+    exec_sql_query(
+        $db,
+        "DELETE FROM restaurant_tags WHERE restaurant_id = :id",
+        array(':id' => $restaurant_id)
+    );
+
+    // Delete the restaurant
+    exec_sql_query(
+        $db,
+        "DELETE FROM restaurants WHERE id = :id",
+        array(':id' => $restaurant_id)
+    );
+
+    if ($restaurant) {
+        $image_path = "public/uploads/restaurants/" . $restaurant_id . "." . $restaurant['file_ext'];
+        if (file_exists($image_path)) {
+            unlink($image_path);
+        }
+    }
+
+    // Redirect to admin home
+    header("Location: /admin");
+    exit;
 }
 
 // query the database for the restaurant record
@@ -91,9 +162,22 @@ $sql_tags_query = "SELECT tags.name
                    WHERE restaurant_tags.restaurant_id = :id";
 $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaurant_id))->fetchAll();
 
+// Get all existing tags in database
+$sql_all_tags = "SELECT * FROM tags ORDER BY name";
+$all_tags = exec_sql_query($db, $sql_all_tags)->fetchAll();
+
+// Get current tags for this restaurant (as IDs, not names)
+$sql_current_tags = "SELECT tag_id FROM restaurant_tags WHERE restaurant_id = :id";
+$current_tag_records = exec_sql_query($db, $sql_current_tags, array(':id' => $restaurant_id))->fetchAll();
+
+// Extract just the tag IDs into an array for easy checking
+$current_tag_ids = array_column($current_tag_records, 'tag_id');
+
+
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<!-- Handle CSS styling separately for admin pages -->
+<html class="admin-page" lang="en">
 
 <!-- Will need to eventually turn this into a partial via meta.php -->
 
@@ -101,7 +185,7 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Administrator Portal</title>
+    <title>Edit Restaurant</title>
 
     <link rel="stylesheet" type="text/css" href="/styles/site.css">
 </head>
@@ -115,8 +199,30 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
 
         <h1>Ithaca Eateries Catalog</h1>
 
+        <h2>Administrator Portal</h2>
+
+        <div class="admin-login">
+            <?php if (is_user_logged_in()): ?>
+                <!-- User IS logged in - show logout -->
+                <form method="POST">
+                    <button type="submit" name="logout">Logout</button>
+                </form>
+                <!-- Note: User redirected to login page if not logged in
+                    Login form not implemented. -->
+            <?php endif; ?>
+        </div>
+
+        <p> Return to admin view page:</p>
+        <a href="/admin"> Return Admin Home</a>
+
         <div class="catalog">
             <h3>Edit Restaurant Information</h3>
+
+            <!-- Try/Catch blocks sets the string values of $error_message -->
+            <?php if (!empty($error_message)): ?>
+                <p class="error"><?php echo htmlspecialchars($error_message); ?></p>
+            <?php endif; ?>
+
             <?php
 
             $id = $restaurant["id"]; // added as reference for parameter to be passed
@@ -167,23 +273,53 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
                 <!-- Source: Mozilla Reference Documentation -->
                 <textarea name="description" id="description" rows="3"> <?php echo htmlspecialchars($description) ?> </textarea>
 
+                <input type="hidden" name="MAX_FILE_SIZE" value="1000000">
                 <label for="restaurant-image">Image: </label>
                 <input type="file" name="restaurant-image" id="restaurant-image" accept=".jpeg, .jpg, .png">
-                <p>uploading new image is optional</p>
 
-                <!-- Will implement form submission functionality in future -->
+                <!-- Editing tags will require list of all tags -->
+                <label for="tags">Tags:</label>
+                <select multiple name="tags[]" id="tags">
+                    <?php foreach ($all_tags as $tag): ?>
+                        <option value="<?php echo $tag['id']; ?>"
+                            <?php if (in_array($tag['id'], $current_tag_ids)): ?>
+                            selected
+                            <?php endif; ?>>
+                            <?php echo htmlspecialchars($tag['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
                 <button type="submit" name="edit-restaurant">
                     Save Changes
                 </button>
 
             </form>
 
-            <h3>Cuisine Types:</h3>
+            <h3>Current Cuisine Types:</h3>
             <ul>
                 <?php foreach ($restaurant_tags as $tag) { ?>
                     <li><?php echo htmlspecialchars($tag["name"]); ?></li>
                 <?php } ?>
             </ul>
+
+            <!-- Validate form for entry deletion confirmation -->
+            <?php if (isset($_GET['delete']) && $_GET['delete'] == 'confirm'): ?>
+                <p>Are you sure you want to delete this restaurant?</p>
+                <form method="POST">
+                    <input type="hidden" name="restaurant_id" value="<?php echo htmlspecialchars($id); ?>">
+                    <!-- if yes, trigger actual deletion -->
+                    <button type="submit" name="delete-confirmed">Yes, Delete</button>
+                    <a href="/admin/edit?id=<?php echo $id; ?>">Cancel</a>
+                </form>
+            <?php else: ?>
+                <!-- Show initial delete button -->
+                <a href="/admin/edit?id=<?php echo $id; ?>&delete=confirm">
+                    <button type="button">Delete Restaurant</button>
+                </a>
+            <?php endif; ?>
+
+
         </div>
     </main>
 </body>

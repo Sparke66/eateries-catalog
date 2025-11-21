@@ -1,8 +1,11 @@
 <?php
 
-// NOTE: do not need to implement form validation, sticky forms, and corrective feedback
-// DO NEED to display error message if insert/update query fails
-
+// Checks if user is logged in; implement for every admin page
+if (!is_user_logged_in()) {
+    // Not logged in - redirect to login page
+    header("Location: /login");
+    exit;
+}
 
 $error_message = "";                    // Initialize error message
 
@@ -49,13 +52,14 @@ if (isset($_POST["add-restaurant"])) {
             $error_message = "Please upload a restaurant image.";
         }
     } catch (PDOException $exception) {
-        $error_message = "Failed to update restaurant. Please try again.";
+        $error_message = "Failed to add restaurant.";
     }
 }
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<!-- Handle CSS styling separately for admin pages -->
+<html class="admin-page" lang="en">
 
 <!-- Will need to eventually turn this into a partial via meta.php -->
 
@@ -63,7 +67,7 @@ if (isset($_POST["add-restaurant"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Administrator Portal</title>
+    <title>Add Restaurant</title>
 
     <link rel="stylesheet" type="text/css" href="/styles/site.css">
 </head>
@@ -77,8 +81,28 @@ if (isset($_POST["add-restaurant"])) {
 
         <h1>Ithaca Eateries Catalog</h1>
 
+        <h2>Administrator Portal</h2>
+
+        <div class="admin-login">
+            <?php if (is_user_logged_in()): ?>
+                <!-- User IS logged in - show logout -->
+                <form method="POST">
+                    <button type="submit" name="logout">Logout</button>
+                </form>
+                <!-- Note: User redirected to login page if not logged in
+                    Login form not implemented. -->
+            <?php endif; ?>
+        </div>
+
+        <a href="/admin"> Return to Admin Homepage</a>
+
         <div class="catalog">
             <h3>Add New Restaurant</h3>
+
+            <!-- Try/Catch blocks sets the string values of $error_message -->
+            <?php if (!empty($error_message)): ?>
+                <p class="error"><?php echo htmlspecialchars($error_message); ?></p>
+            <?php endif; ?>
 
             <!--
             Implement form. Admin should be able to change:
@@ -108,6 +132,7 @@ if (isset($_POST["add-restaurant"])) {
                 <!-- Source: Mozilla Reference Documentation -->
                 <textarea name="description" id="description" rows="3"></textarea>
 
+                <input type="hidden" name="MAX_FILE_SIZE" value="1000000">
                 <label for="restaurant-image">Image: </label>
                 <input type="file" name="restaurant-image" id="restaurant-image" accept=".jpeg, .jpg, .png">
 
