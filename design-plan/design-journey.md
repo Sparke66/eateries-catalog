@@ -10,3 +10,4 @@ If you need to revise your design/plan, please revise the plan in the original m
 - [Milestone 2](milestone-2.md)
 - [Milestone 3](milestone-3.md)
 - [Final Milestone](milestone-final.md)
+- [Milestone EX-1](milestone-ex1.md)
