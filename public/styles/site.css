@@ -3,17 +3,33 @@ html {
     background-color: rgb(255, 242, 182);
 }
 
+main {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px;
+}
+
+/* CSS styling for the filter bar */
 .tags {
     background-color: aqua;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 0;
-    margin-bottom: 15px;
+    flex-direction: row;
 }
 
+.tags p {
+    min-width: 150px;
+    margin: auto;
+    text-align: center;
+}
+
+/* CSS for each individual tag within the filter bar */
 .tag {
-    padding: 5px 15px;
+    padding: 5px;
+    margin: 5px;
     border-radius: 25px;
     font-size: 16px;
 }
@@ -46,13 +62,40 @@ main .tile {
     height: 100px;
 }
 
+/* CSS for the catalog and flex behavior of its children */
+.catalog {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* CSS for each consumer tile */
 .tile {
-    border: solid red;
+    margin: 10px;
+}
+
+.tile figure {
+    margin: 0px;
+    width: 350px;
+    height: 175px;
 }
 
 .tile figure img {
-    width: 300px;
-    height: 200px;
+    width: 350px;
+    height: 175px;
+}
+
+/* CSS for text in each consumer tile. Margins are expected to be small */
+
+.tile .tile-text {
+    margin: 10px;
+}
+
+.tile h3 {
+    margin: 0px;
+}
+
+.tile p {
+    margin: 0px;
 }
 
 img.edit-button {
@@ -60,7 +103,7 @@ img.edit-button {
 }
 
 select {
-  height: 200px;
+    height: 200px;
 }
 
 textarea {

@@ -57,8 +57,10 @@ if ($filter_param) {
     <h1>Ithaca Eateries Catalog</h1>
 
     <!-- Display the list of tags; may need to port over to partial -->
+
     <div class="tags">
       <p> Select Cuisine Type: </p>
+      <div class="tag-list">
       <?php
       foreach ($tags as $tag) {
         $tag_name = $tag["name"];
@@ -66,11 +68,13 @@ if ($filter_param) {
         <a href="/?<?php echo http_build_query(array(
                       "filter" => $tag_name
                     )); ?>">
-          <p class="tag"><?php echo htmlspecialchars($tag_name) ?></p>
+          <button class="tag"><?php echo htmlspecialchars($tag_name) ?></button>
         </a>
       <?php
       }
       ?>
+      </div>
+
 
     </div>
 
