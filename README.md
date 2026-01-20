@@ -34,3 +34,4 @@ C = Minor fixes
 - No visual feedback when hovering over buttons on Cuisine Filter Bar
 - No current method to "Select All" or select default view after viewing specific cuisine type
 - Unusual underlines between tags on filter bar. Explicit visual feedback from mouse when hovering over underline, but no visual feedback over button
+- Administrator Portal requires huge overhaul
