@@ -61,6 +61,11 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
         <p> Return to homepage:</p>
         <a href="/"> Return Consumer Home</a>
 
+        <div class="background">
+            <h1> This div container should have a background image</h1>
+
+        </div>
+
         <div class="catalog">
             <h3>List of Restaurants</h3>
             <?php

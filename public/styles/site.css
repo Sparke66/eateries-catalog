@@ -174,3 +174,11 @@ label {
     margin-bottom: 5px;
     font-weight: 600;
 }
+
+.consumer .background {
+    background-image: url("/images/placeholder.jpg");
+    background-size: cover; /* Makes image cover the container */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents tiling */
+    min-height: 400px;
+}

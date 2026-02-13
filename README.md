@@ -15,6 +15,8 @@ Document your design and your plan in the [design journey](design-plan/design-jo
 - "/admin/edit"  => "pages/admin_edit.php",     // admin edit entry / tag /untag
 - "/login"       => "pages/login.php"           // login
 
+## Update Semantics
+
 AA.BB.CCC
 
 A = Major UI Overhaul
@@ -26,12 +28,20 @@ C = Minor fixes
 - Explicit visual feedback from mouse when hovering over certain regions outside the bounds of the filter buttons. Has to do with the way the `<a>` tags are structured
 - Administrator Portal requires huge overhaul
 - Individual view of restaurants need to be redesigned
+- The filter bar element needs some adjustment - recommend different color, rounding of edges, shadowing
+- Restaurant tiles should also have edge rounding and shadowing
+- Each button in the filter bar could also use shadowing
+- Consumer Entry page under construction to test background images within `<div>` containers
 
 ## Proposed Future Additions
 
 - Search bar function to search for a specific restaurant
 - Implement multiple filters
 - Show the opening hours of the restaurant
+
+## Update 1.3.7 (2-13-26)
+
+- Consumer Entry Page under construction: testing features to add background images inside `<div>` containers
 
 ## Update 1.2.7 (2-13-26)
 
