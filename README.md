@@ -21,6 +21,24 @@ A = Major UI Overhaul
 B = Feature added/update
 C = Minor fixes
 
+## Known Issues
+
+- Explicit visual feedback from mouse when hovering over certain regions outside the bounds of the filter buttons. Has to do with the way the `<a>` tags are structured
+- Administrator Portal requires huge overhaul
+- Individual view of restaurants need to be redesigned
+
+## Proposed Future Additions
+
+- Search bar function to search for a specific restaurant
+- Implement multiple filters
+- Show the opening hours of the restaurant
+
+## Update 1.2.7 (2-13-26)
+
+- Fixed the filter tags to return visual feedback when hovering over buttons. The cursor should now change into a hand icon or pointer when hovering over buttons.
+- Added a button to reset the filter of the Homepage
+- Removed unusual underlines between tags on filter bar.
+
 ## Update 1.2.4 (2-13-26)
 
 - Added comments throughout the repository for better code readability
@@ -35,19 +53,3 @@ C = Minor fixes
 - Overhauled the Cuisine Filter Tab on the Consumer Homepage to follow formatting semantics
 - Overhauled the formatting semantics of each restaurant tile
 - Fixed an issue where the hyperlink encapsulated the entire tile. The hyperlink now only works by clicking on the image.
-
-## Known Issues
-
-- Inconsistent sizing of each tile on the Homepage; may need to evaluate how to wrap text (fixed)
-- Incorrect font for the theme of the website (fixed)
-- No visual feedback when hovering over buttons on Cuisine Filter Bar
-- No current method to "Select All" or select default view after viewing specific cuisine type
-- Unusual underlines between tags on filter bar. Explicit visual feedback from mouse when hovering over underline, but no visual feedback over button
-- Administrator Portal requires huge overhaul
-- Individual view of restaurants need to be redesigned
-
-## Proposed Future Additions
-
-- Search bar function to search for a specific restaurant
-- Implement multiple filters
-- Show the opening hours of the restaurant

@@ -73,6 +73,12 @@ if ($filter_param) {
     <div class="tags">
       <p> Select Cuisine Type: </p>
       <div class="tag-list">
+
+        <!-- Reset Filter button -->
+        <a href="/">
+          <button class="tag">All Restaurants</button>
+        </a>
+
         <?php
         // Generate a filter button for each tag
         foreach ($tags as $tag) {

@@ -43,6 +43,18 @@ h1 {
     font-size: 16px;
 }
 
+/* Hard codes the tags to return visual feedback when hovering the curser over a tag */
+/* The cursor should change into a hand icon or pointer */
+.tag:hover {
+    color: #0056b3;
+    cursor: pointer;
+}
+
+/* Prevents underlines between tags */
+.tags a {
+    text-decoration: none;
+}
+
 /* Admin-specific tag styling */
 /* Pink background distinguishes admin tag section from consumer view */
 aside.admin-tags .tags {
