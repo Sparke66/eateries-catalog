@@ -1,5 +1,5 @@
 html {
-    font-family: san-serif;
+    font-family: 'Inter', 'Open Sans', Arial, sans-serif;
     background-color: rgb(255, 242, 182);
 }
 
@@ -71,6 +71,7 @@ main .tile {
 /* CSS for each consumer tile */
 .tile {
     margin: 10px;
+    max-width: 350px;
 }
 
 .tile figure {
