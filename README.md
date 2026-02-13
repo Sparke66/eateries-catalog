@@ -8,18 +8,22 @@ Document your design and your plan in the [design journey](design-plan/design-jo
 
 ## Guide
 
-"/"            => "pages/home.php",           // consumer view all / filterby tag
-"/reviews"     => "pages/consumer_entry.php", // consumer entry details
-"/admin"       => "pages/admin_view.php",     // admin view all / filter bytag
-"/admin/entry" => "pages/admin_insert.php",   // admin insert entry
-"/admin/edit"  => "pages/admin_edit.php",     // admin edit entry / tag /untag
-"/login"       => "pages/login.php"           // login
+- "/"            => "pages/home.php",           // consumer view all / filterby tag
+- "/reviews"     => "pages/consumer_entry.php", // consumer entry details
+- "/admin"       => "pages/admin_view.php",     // admin view all / filter bytag
+- "/admin/entry" => "pages/admin_insert.php",   // admin insert entry
+- "/admin/edit"  => "pages/admin_edit.php",     // admin edit entry / tag /untag
+- "/login"       => "pages/login.php"           // login
 
 AA.BB.CCC
 
 A = Major UI Overhaul
 B = Feature added/update
 C = Minor fixes
+
+## Update 1.2.4 (2-13-26)
+
+- Added comments throughout the repository for better code readability
 
 ## Update 1.2.3 (1-21-26)
 

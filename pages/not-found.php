@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- 404 Error Page -->
+<!-- Displayed when requested page/resource is not found -->
 <html lang="en">
 
 <head>

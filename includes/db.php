@@ -1,12 +1,15 @@
 <?php
 // open_sqlite_db() removed. Use init_sqlite_db() instead.
 
-// Open a connection to an SQLite database stored in filename: $db_filename.
-// If database does not exists, will execute .sql file from $init_sql_filename
-// to create and initialize the database. No database is created if there is
-// an error the initialization SQL.
-// Returns: Connection to database.
-// Example: $db = init_sqlite_db("db/site.sqlite", "db/init.sql");
+/**
+ * Initialize and open an SQLite database
+ * Open a connection to an SQLite database stored in filename: $db_filename.
+ * If database does not exists, will execute .sql file from $init_sql_filename
+ * to create and initialize the database. No database is created if there is
+ * an error the initialization SQL.
+ * Returns: Connection to database.
+ * Example: $db = init_sqlite_db("db/site.sqlite", "db/init.sql");
+ */
 function init_sqlite_db($db_filename, $init_sql_filename)
 {
   // If the init SQL script does not exist, quit!
@@ -15,6 +18,8 @@ function init_sqlite_db($db_filename, $init_sql_filename)
   }
 
   // create checksum of initialization script.
+  // Used to detect if the init.sql file has changed since database creation
+  // Used to detect if the init.sql file has changed since database creation
   $init_sql = file_get_contents($init_sql_filename);
   $init_checksum = md5($init_sql);
 
@@ -27,11 +32,13 @@ function init_sqlite_db($db_filename, $init_sql_filename)
   }
 
   // If the database exists, but no checksum file exists, then we have a consistency problem with the DB.
+  // This prevents issues where the database and init script become out of sync
   if (file_exists($db_filename) && !file_exists($init_checksum_filename)) {
     throw new Exception("No checksum for existing database. Regenerate your database (delete .sqlite file).");
   }
 
   // Get the existing checksum and compare it the init checksum.
+  // If they differ, the init script has changed and database needs to be regenerated
   if (file_exists($init_checksum_filename)) {
     $current_checksum = file_get_contents($init_checksum_filename);
 
@@ -50,10 +57,12 @@ function init_sqlite_db($db_filename, $init_sql_filename)
 
     try {
       // initialize database using .sql script
+      // Using transactions ensures all-or-nothing execution
       $db->beginTransaction();
       $result = $db->exec($init_sql);
       $db->commit();
       if ($result !== FALSE) {
+        // Save checksum to track this version of the init script
         file_put_contents($init_checksum_filename, $init_checksum);
         return $db;
       }
@@ -70,6 +79,7 @@ function init_sqlite_db($db_filename, $init_sql_filename)
 
     // database was already initialized. Just open it!
     $db = new PDO("sqlite:" . $db_filename);
+    // Set error mode to throw exceptions for easier debugging
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     return $db;
   }
@@ -77,14 +87,20 @@ function init_sqlite_db($db_filename, $init_sql_filename)
   return NULL;
 }
 
-// Execute a query ($sql) against a database ($db).
-// Returns query results if query was successful.
-// Returns NULL if query was not successful.
+/**
+ * Execute a SQL query with prepared statements
+ * Execute a query ($sql) against a database ($db).
+ * Returns query results if query was successful.
+ * Returns NULL if query was not successful.
+ * Uses prepared statements to prevent SQL injection attacks.
+ */
 function exec_sql_query($db, $sql, $params = array())
 {
   error_log("  executing SQL: " . $sql);
 
+  // Prepare statement to prevent SQL injection
   $query = $db->prepare($sql);
+  // Execute with parameters and return query object if successful
   if ($query and $query->execute($params)) {
     return $query;
   }

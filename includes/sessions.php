@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Session and Authentication Management
+ * Handles user login, logout, session tracking, and account creation
+ * Uses cookie-based sessions with database storage for persistence
+ */
 include_once('includes/db.php');
 
 // User Messages
@@ -6,9 +12,13 @@ $session_messages = array();
 $signup_messages = array();
 
 // cookie duration expiration time in seconds
+// Sessions expire after 1 hour of inactivity
 define('SESSION_COOKIE_DURATION', 60 * 60 * 1); // 1 hour = 60 sec * 60 min * 1 hr
 
-// find user's record from user_id
+/**
+ * Find user record by user ID
+ * Returns user record from database or NULL if not found
+ */
 function find_user($db, $user_id)
 {
   $records = exec_sql_query(
@@ -23,7 +33,10 @@ function find_user($db, $user_id)
   return NULL;
 }
 
-// find group's record from user_id
+/**
+ * Find group record by group ID
+ * Returns group record from database or NULL if not found
+ */
 function find_group($db, $group_id)
 {
   $records = exec_sql_query(
@@ -38,7 +51,11 @@ function find_group($db, $group_id)
   return NULL;
 }
 
-// find user's record from session hash
+/**
+ * Find session record by session hash
+ * Looks up active session in database using session cookie value
+ * Returns session record or NULL if not found
+ */
 function find_session($db, $session)
 {
   if (isset($session)) {
@@ -55,14 +72,20 @@ function find_session($db, $session)
   return NULL;
 }
 
-// provide a function alternative to  $current_user
+/**
+ * Get current logged-in user
+ * Provides a function alternative to accessing $current_user global
+ */
 function current_user()
 {
   global $current_user;
   return $current_user;
 }
 
-// Did the user log in?
+/**
+ * Check if a user is currently logged in
+ * Returns true if user is authenticated, false otherwise
+ */
 function is_user_logged_in()
 {
   global $current_user;
@@ -71,7 +94,10 @@ function is_user_logged_in()
   return ($current_user != NULL);
 }
 
-// is the user a member
+/**
+ * Check if current user is a member of a specific group
+ * Returns true if user belongs to the group, false otherwise
+ */
 function is_user_member_of($db, $group_id)
 {
   global $current_user;
@@ -79,6 +105,7 @@ function is_user_member_of($db, $group_id)
     return False;
   }
 
+  // Check if user_groups table has an entry linking this user to the group
   $records = exec_sql_query(
     $db,
     "SELECT id FROM user_groups WHERE (group_id = :group_id) AND (user_id = :user_id);",
@@ -94,14 +121,20 @@ function is_user_member_of($db, $group_id)
   }
 }
 
-// login with username and password
+/**
+ * Authenticate user with username and password
+ * Verifies credentials and creates a new session if valid
+ * Returns user record on success, NULL on failure
+ */
 function password_login($db, &$messages, $username, $password)
 {
   global $current_user;
   global $sticky_login_username;
 
+  // Trim whitespace from credentials
   $username = trim($username);
   $password = trim($password);
+  // Store username for sticky forms (repopulate on error)
   $sticky_login_username = $username;
 
   if (isset($username) && isset($password)) {
@@ -116,6 +149,7 @@ function password_login($db, &$messages, $username, $password)
       $user = $records[0];
 
       // Check password against hash in DB
+      // Using password_verify for secure bcrypt comparison
       if (password_verify($password, $user['password'])) {
         // Generate session
         $session = session_create_id();
@@ -133,6 +167,7 @@ function password_login($db, &$messages, $username, $password)
           // Success, session stored in DB
 
           // Send this back to the user.
+          // Cookie will be used for subsequent requests to maintain login
           setcookie("session", $session, time() + SESSION_COOKIE_DURATION, '/');
 
           error_log("  login via password successful");
@@ -156,7 +191,11 @@ function password_login($db, &$messages, $username, $password)
   return $current_user;
 }
 
-// login via session cookie
+/**
+ * Restore user session from cookie
+ * Validates session token and checks expiration
+ * Renews cookie if session is still valid
+ */
 function cookie_login($db, $session)
 {
   global $current_user;
@@ -165,6 +204,7 @@ function cookie_login($db, $session)
   if ($session) {
 
     // has the session expired?
+    // Calculate when this session should expire based on last login
     $login_expiration = new DateTime($session['last_login']);
     $login_expiration->modify('+ ' . SESSION_COOKIE_DURATION . ' seconds');
     $current_datetime = new DateTime();
@@ -197,7 +237,11 @@ function cookie_login($db, $session)
   return NULL;
 }
 
-// logout
+/**
+ * Log out the current user
+ * Removes session from database and clears session cookie
+ * Redirects back to current page
+ */
 function logout($db, $session)
 {
   if ($session) {
@@ -230,11 +274,15 @@ function logout($db, $session)
   $redirect_url = htmlspecialchars($request_uri) . '?' . http_build_query($params);
 
   // Send the user back to the same page
+  // This prevents logout parameter from appearing in URL after logout
   header('Location: ' . $redirect_url);
   exit();
 }
 
-// logout url for the current page
+/**
+ * Generate logout URL for current page
+ * Returns URL with logout parameter appended
+ */
 function logout_url()
 {
   $request_uri = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
@@ -249,12 +297,17 @@ function logout_url()
   return $logout_url;
 }
 
-// render login form
+/**
+ * Render HTML login form
+ * Displays login form with username and password fields
+ * Shows validation messages if login fails
+ */
 function login_form($action, $messages)
 {
   global $sticky_login_username;
   ob_start();
 ?>
+  <!-- Login feedback messages -->
   <ul class="login">
     <?php
     foreach ($messages as $message) {
@@ -262,6 +315,7 @@ function login_form($action, $messages)
     } ?>
   </ul>
 
+  <!-- Login form with username and password inputs -->
   <form class="login" action="<?php echo htmlspecialchars($action) ?>" method="post" novalidate>
     <div class="label-input">
       <label for="username">Username:</label>
@@ -282,7 +336,11 @@ function login_form($action, $messages)
   return $html;
 }
 
-// Check for login, logout requests. Or check to keep the user logged in.
+/**
+ * Process login, logout, and session requests
+ * Check for login, logout requests. Or check to keep the user logged in.
+ * Should be called on every page that requires authentication
+ */
 function process_session_params($db, &$messages)
 {
   // Is there a session? If so, find it!
@@ -290,6 +348,7 @@ function process_session_params($db, &$messages)
   if (isset($_COOKIE["session"])) {
     $session_hash = $_COOKIE["session"];
 
+    // Look up session in database
     $session = find_session($db, $session_hash);
   }
 
@@ -305,13 +364,20 @@ function process_session_params($db, &$messages)
   }
 }
 
-// alias for process_session_params
+/**
+ * Alias for process_session_params
+ * Alternative function name for backwards compatibility
+ */
 function process_login_params($db, &$messages)
 {
   process_session_params($db, $messages);
 }
 
-// function to create user account
+/**
+ * Create a new user account
+ * Validates username and password, creates new user record in database
+ * Automatically logs in the user if account creation succeeds
+ */
 function create_account($db, $name, $username, $password, $password_confirmation)
 {
   global $signup_messages;
@@ -329,6 +395,7 @@ function create_account($db, $name, $username, $password, $password_confirmation
 
   $account_valid = True;
 
+  // Begin transaction to ensure atomic account creation
   $db->beginTransaction();
 
   // check if username is unique, give error message if not.
@@ -361,10 +428,12 @@ function create_account($db, $name, $username, $password, $password_confirmation
     array_push($signup_messages, "Password confirmation doesn't match your password. Reenter your password.");
   } else {
     // hash the password
+    // Using bcrypt for secure password storage
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
   }
 
   if ($account_valid) {
+    // Insert new user into database
     $result = exec_sql_query(
       $db,
       "INSERT INTO users (name, username, password) VALUES (:name, :username, :password);",
@@ -385,13 +454,18 @@ function create_account($db, $name, $username, $password, $password_confirmation
   $db->commit();
 }
 
-// render sign up form
+/**
+ * Render HTML signup form
+ * Displays registration form with name, username, and password fields
+ * Shows validation messages if signup fails
+ */
 function signup_form($action, $signup_messages)
 {
   global $sticky_signup_username;
   global $sticky_signup_name;
   ob_start();
 ?>
+  <!-- Signup feedback messages -->
   <ul class="signup">
     <?php
     foreach ($signup_messages as $message) {
@@ -399,6 +473,7 @@ function signup_form($action, $signup_messages)
     } ?>
   </ul>
 
+  <!-- Signup form with name, username, password, and confirmation inputs -->
   <form class="signup" action="<?php echo htmlspecialchars($action) ?>" method="post" novalidate>
     <div class="label-input">
       <label for="name">Name:</label>
@@ -430,7 +505,10 @@ function signup_form($action, $signup_messages)
   return $html;
 }
 
-// Check for sign up request
+/**
+ * Process signup form submission
+ * Check for sign up request and create account if form submitted
+ */
 function process_signup_params($db)
 {
   // Check if we should login the user

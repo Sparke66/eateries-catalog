@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Consumer Entry Page - Detailed Restaurant View
+ * Displays comprehensive information about a single restaurant
+ * Shows tags, ratings, description, and other details
+ */
+
+// Constant array mapping numeric ratings to star display strings
 const RATING_STARS = array(
     1 => "★☆☆☆☆",
     2 => "★★☆☆☆",
@@ -9,6 +16,8 @@ const RATING_STARS = array(
 );
 
 // retrieve query string parameter for filtering
+// Get restaurant ID from URL parameter
+// Get restaurant ID from URL parameter
 $restaurant_id = $_GET["id"] ?? NULL;
 
 // query the database for the restaurant record
@@ -17,6 +26,7 @@ $restaurant = exec_sql_query($db, $sql_rest_query, array(':id' => $restaurant_id
 
 
 // Get all tags for this restaurant
+// Join with tags table to get tag names
 $sql_tags_query = "SELECT tags.name
                    FROM tags
                    INNER JOIN restaurant_tags ON tags.id = restaurant_tags.tag_id
@@ -54,15 +64,16 @@ $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaura
         <div class="catalog">
             <h3>List of Restaurants</h3>
             <?php
-
+            // Extract restaurant details from database record
             $id = $restaurant["id"]; // added as reference for parameter to be passed
             $name = $restaurant["name"];
             $address = $restaurant["address"];
-            $rating = RATING_STARS[$restaurant["rating"]];
+            $rating = RATING_STARS[$restaurant["rating"]]; // Convert numeric rating to stars
             $avg_price = $restaurant["avg_price"];
             $description = $restaurant["description"];
             ?>
 
+            <!-- Detailed restaurant information display -->
             <div class="restaurant-details">
                 <?php $file_ext = $restaurant["file_ext"] ?>
                 <figure>

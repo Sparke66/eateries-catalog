@@ -1,25 +1,33 @@
+/* Global HTML styling */
+/* Sets base font family and background color for entire document */
 html {
     font-family: 'Inter', 'Open Sans', Arial, sans-serif;
     background-color: rgb(255, 242, 182);
 }
 
+/* Main content container */
+/* Centers content and constrains maximum width for readability */
 main {
     max-width: 1200px;
     margin: auto;
 }
 
+/* Page heading styling */
+/* Centers h1 elements and adds consistent spacing */
 h1 {
     text-align: center;
     margin: 10px;
 }
 
 /* CSS styling for the filter bar */
+/* Creates horizontal layout for tag filtering interface */
 .tags {
     background-color: aqua;
     display: flex;
     flex-direction: row;
 }
 
+/* Label/heading within the tag filter bar */
 .tags p {
     min-width: 150px;
     margin: auto;
@@ -27,6 +35,7 @@ h1 {
 }
 
 /* CSS for each individual tag within the filter bar */
+/* Creates rounded pill-style buttons for tags */
 .tag {
     padding: 5px;
     margin: 5px;
@@ -34,83 +43,111 @@ h1 {
     font-size: 16px;
 }
 
+/* Admin-specific tag styling */
+/* Pink background distinguishes admin tag section from consumer view */
 aside.admin-tags .tags {
     background-color: pink;
     display: flex;
 }
 
+/* Spacing for admin tag links */
 aside.admin-tags .tags a .tag {
     margin-left: 5px;
     margin-right: 5px;
 }
 
+/* General tile styling */
+/* Black border for all restaurant tiles */
 main .tile {
     border: solid black;
 }
 
+/* Admin layout: displays sidebar and main content side-by-side */
 .admin-aside-main {
     display: flex;
 }
 
+/* Admin tile styling */
+/* Red border to distinguish admin view, horizontal layout for content */
 .admin-tile {
     border: solid red;
     display: flex;
 }
 
+/* Admin tile image sizing */
+/* Smaller images in admin view for compact display */
 .admin-tile figure img {
     width: 150px;
     height: 100px;
 }
 
 /* CSS for the catalog and flex behavior of its children */
+/* Flexbox layout allows tiles to wrap and fill available space */
 .catalog {
     display: flex;
     flex-wrap: wrap;
 }
 
 /* CSS for each consumer tile */
+/* Sets consistent spacing and maximum width for restaurant cards */
 .tile {
     margin: 10px;
     max-width: 350px;
 }
 
+/* Figure container for tile images */
+/* Fixed dimensions for consistent image display */
 .tile figure {
     margin: 0px;
     width: 350px;
     height: 175px;
 }
 
+/* Tile image sizing */
+/* Ensures images fill the figure container */
 .tile figure img {
     width: 350px;
     height: 175px;
 }
 
 /* CSS for text in each consumer tile. Margins are expected to be small */
-
+/* Consistent spacing for tile content */
 .tile .tile-text {
     margin: 10px;
 }
 
+/* Tile heading styling */
+/* Removes default margins for tight spacing */
 .tile h3 {
     margin: 0px;
 }
 
+/* Tile paragraph styling */
+/* Removes default margins for compact layout */
 .tile p {
     margin: 0px;
 }
 
+/* Edit button image sizing */
+/* Small icon size for edit controls */
 img.edit-button {
     width: 50px;
 }
 
+/* Multi-select dropdown styling */
+/* Increased height to show multiple options at once */
 select {
     height: 200px;
 }
 
+/* Textarea input sizing */
+/* Fixed width for consistent form layout */
 textarea {
     width: 300px;
 }
 
+/* Body styling */
+/* Sets line height for readability and pink background */
 body {
     line-height: 1.6;
     background-color: #ffc9c9;
@@ -118,6 +155,8 @@ body {
     padding: 0;
 }
 
+/* Form label styling */
+/* Block display for labels above inputs, bold weight for emphasis */
 label {
     display: block;
     margin-bottom: 5px;

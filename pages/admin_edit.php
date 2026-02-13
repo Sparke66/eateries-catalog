@@ -12,6 +12,7 @@ $error_message = "";                    // Initialize error message
 $restaurant_id = $_GET["id"] ?? NULL;   // retrieve query string parameter for filtering
 
 // validate form for editing restaurant
+// Process form submission when edit button is clicked
 if (isset($_POST["edit-restaurant"])) {
     // Get the form data
     $restaurant_id = $_POST['id'];
@@ -25,11 +26,13 @@ if (isset($_POST["edit-restaurant"])) {
 
     try {
         // If updating with new image
+        // Check if a new image was uploaded
         if ($upload_file["error"] == UPLOAD_ERR_OK) {
             // Extract file information
             $file_name = basename($upload_file['name']);
             $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
+            // Update restaurant record including new file extension
             $result = exec_sql_query(
                 $db,
                 "UPDATE restaurants SET name = :name,
@@ -51,12 +54,14 @@ if (isset($_POST["edit-restaurant"])) {
                 )
             );
 
+            // Move uploaded file to permanent location, replacing old image
             $upload_path = "public/uploads/restaurants/" . $restaurant_id . "." . $file_ext;
             move_uploaded_file($upload_file['tmp_name'], $upload_path);
         }
 
 
         // If not updating with new image
+        // Update restaurant info without changing the image
         else {
             $result = exec_sql_query(
                 $db,
@@ -79,8 +84,10 @@ if (isset($_POST["edit-restaurant"])) {
         }
 
         // validate form for editing tags
+        // Update restaurant-tag associations
         if (isset($_POST['tags'])) {
             // First, remove all existing tags for this restaurant
+            // This ensures we don't have duplicate or stale associations
             $result = exec_sql_query(
                 $db,
                 "DELETE FROM restaurant_tags
@@ -105,9 +112,11 @@ if (isset($_POST["edit-restaurant"])) {
 
 
 
+        // Redirect back to edit page to show updated data
         header("Location: /admin/edit?id=" . $restaurant_id);
         exit;
     } catch (PDOException $exception) {
+        // Database error occurred
         $error_message = "Failed to update restaurant.";
     }
 }
@@ -115,10 +124,12 @@ if (isset($_POST["edit-restaurant"])) {
 
 
 // validate form for restaurant deletion
+// Handle confirmed deletion request
 if (isset($_POST['delete-confirmed'])) {
     $restaurant_id = $_POST['restaurant_id'];
 
     // Optional: Delete the image file
+    // Get file extension before deleting from database
     $restaurant = exec_sql_query(
         $db,
         "SELECT file_ext FROM restaurants WHERE id = :id",
@@ -126,6 +137,7 @@ if (isset($_POST['delete-confirmed'])) {
     )->fetch();
 
     // Delete the restaurant's tags first (foreign key constraint)
+    // Required due to foreign key relationship
     exec_sql_query(
         $db,
         "DELETE FROM restaurant_tags WHERE restaurant_id = :id",
@@ -139,6 +151,7 @@ if (isset($_POST['delete-confirmed'])) {
         array(':id' => $restaurant_id)
     );
 
+    // Delete associated image file from filesystem
     if ($restaurant) {
         $image_path = "public/uploads/restaurants/" . $restaurant_id . "." . $restaurant['file_ext'];
         if (file_exists($image_path)) {
@@ -156,6 +169,7 @@ $sql_rest_query = "SELECT * FROM restaurants WHERE id = :id";
 $restaurant = exec_sql_query($db, $sql_rest_query, array(':id' => $restaurant_id))->fetch();
 
 // Get all tags for this restaurant
+// Fetch tag names for display
 $sql_tags_query = "SELECT tags.name
                    FROM tags
                    INNER JOIN restaurant_tags ON tags.id = restaurant_tags.tag_id
@@ -163,10 +177,12 @@ $sql_tags_query = "SELECT tags.name
 $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaurant_id))->fetchAll();
 
 // Get all existing tags in database
+// For populating the multi-select dropdown
 $sql_all_tags = "SELECT * FROM tags ORDER BY name";
 $all_tags = exec_sql_query($db, $sql_all_tags)->fetchAll();
 
 // Get current tags for this restaurant (as IDs, not names)
+// Used to pre-select current tags in the dropdown
 $sql_current_tags = "SELECT tag_id FROM restaurant_tags WHERE restaurant_id = :id";
 $current_tag_records = exec_sql_query($db, $sql_current_tags, array(':id' => $restaurant_id))->fetchAll();
 
@@ -219,12 +235,13 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
             <h3>Edit Restaurant Information</h3>
 
             <!-- Try/Catch blocks sets the string values of $error_message -->
+            <!-- Display error message if update failed -->
             <?php if (!empty($error_message)): ?>
                 <p class="error"><?php echo htmlspecialchars($error_message); ?></p>
             <?php endif; ?>
 
             <?php
-
+            // Extract restaurant details from database record
             $id = $restaurant["id"]; // added as reference for parameter to be passed
             $name = $restaurant["name"];
             $address = $restaurant["address"];
@@ -233,6 +250,7 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
             $description = $restaurant["description"];
             ?>
 
+            <!-- Display current restaurant image -->
             <?php $file_ext = $restaurant["file_ext"] ?>
             <figure>
                 <img src="/public/uploads/restaurants/<?php echo $id . '.' . htmlspecialchars($file_ext); ?>" alt="<?php echo htmlspecialchars($name); ?>" />
@@ -249,8 +267,10 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
                 - Description
             -->
             <!-- Will need to add form functionality in the future -->
+            <!-- Edit form with all restaurant fields pre-populated -->
             <form method="post" enctype="multipart/form-data">
                 <!-- restaurant ID field is hidden -->
+                <!-- Hidden field preserves ID for update query -->
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($id); ?>">
 
                 <label for="name">Restaurant Name: </label>
@@ -278,9 +298,11 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
                 <input type="file" name="restaurant-image" id="restaurant-image" accept=".jpeg, .jpg, .png">
 
                 <!-- Editing tags will require list of all tags -->
+                <!-- Multi-select dropdown for tag management -->
                 <label for="tags">Tags:</label>
                 <select multiple name="tags[]" id="tags">
                     <?php foreach ($all_tags as $tag): ?>
+                        <!-- Pre-select tags that are currently assigned to this restaurant -->
                         <option value="<?php echo $tag['id']; ?>"
                             <?php if (in_array($tag['id'], $current_tag_ids)): ?>
                             selected
@@ -296,6 +318,7 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
 
             </form>
 
+            <!-- Display current tags for reference -->
             <h3>Current Cuisine Types:</h3>
             <ul>
                 <?php foreach ($restaurant_tags as $tag) { ?>
@@ -304,7 +327,9 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
             </ul>
 
             <!-- Validate form for entry deletion confirmation -->
+            <!-- Two-step deletion: first shows confirmation, then executes -->
             <?php if (isset($_GET['delete']) && $_GET['delete'] == 'confirm'): ?>
+                <!-- Confirmation step: are you sure? -->
                 <p>Are you sure you want to delete this restaurant?</p>
                 <form method="POST">
                     <input type="hidden" name="restaurant_id" value="<?php echo htmlspecialchars($id); ?>">
@@ -314,6 +339,7 @@ $current_tag_ids = array_column($current_tag_records, 'tag_id');
                 </form>
             <?php else: ?>
                 <!-- Show initial delete button -->
+                <!-- First step: link to confirmation -->
                 <a href="/admin/edit?id=<?php echo $id; ?>&delete=confirm">
                     <button type="button">Delete Restaurant</button>
                 </a>
