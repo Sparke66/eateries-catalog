@@ -23,6 +23,8 @@ A = Major UI Overhaul
 B = Feature added/update
 C = Minor fixes
 
+
+
 ## Known Issues
 
 - Explicit visual feedback from mouse when hovering over certain regions outside the bounds of the filter buttons. Has to do with the way the `<a>` tags are structured
@@ -38,6 +40,11 @@ C = Minor fixes
 - Search bar function to search for a specific restaurant
 - Implement multiple filters
 - Show the opening hours of the restaurant
+
+# Update Logs
+
+- Version 1.0.0 is fully implemented when the website demonstrates vital functionality
+- Version 2.0.0 is fully implemented when the website is fully polished
 
 ## Update 1.3.7 (2-13-26)
 
