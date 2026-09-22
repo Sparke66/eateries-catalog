@@ -15,16 +15,6 @@ Document your design and your plan in the [design journey](design-plan/design-jo
 - "/admin/edit"  => "pages/admin_edit.php",     // admin edit entry / tag /untag
 - "/login"       => "pages/login.php"           // login
 
-## Update Semantics
-
-AA.BB.CCC
-
-A = Major UI Overhaul
-B = Feature added/update
-C = Minor fixes
-
-
-
 ## Known Issues
 
 - Explicit visual feedback from mouse when hovering over certain regions outside the bounds of the filter buttons. Has to do with the way the `<a>` tags are structured
@@ -41,31 +31,30 @@ C = Minor fixes
 - Implement multiple filters
 - Show the opening hours of the restaurant
 
-# Update Logs
+## Update 6 (9-22-26)
 
-- Version 1.0.0 is fully implemented when the website demonstrates vital functionality
-- Version 2.0.0 is fully implemented when the website is fully polished
+- Fixed SQL Injection vulnerabilities within the Consumer View Page and Admin View Page
 
-## Update 1.3.7 (2-13-26)
+## Update 5 (2-13-26)
 
 - Consumer Entry Page under construction: testing features to add background images inside `<div>` containers
 
-## Update 1.2.7 (2-13-26)
+## Update 4 (2-13-26)
 
 - Fixed the filter tags to return visual feedback when hovering over buttons. The cursor should now change into a hand icon or pointer when hovering over buttons.
 - Added a button to reset the filter of the Homepage
 - Removed unusual underlines between tags on filter bar.
 
-## Update 1.2.4 (2-13-26)
+## Update 3 (2-13-26)
 
 - Added comments throughout the repository for better code readability
 
-## Update 1.2.3 (1-21-26)
+## Update 2 (1-21-26)
 
 - Fixed an issue where text would not wrap around tile containers
 - Changed the font family of the website
 
-## Update 1.1.2 (1-20-26)
+## Update 1 (1-20-26)
 
 - Overhauled the Cuisine Filter Tab on the Consumer Homepage to follow formatting semantics
 - Overhauled the formatting semantics of each restaurant tile

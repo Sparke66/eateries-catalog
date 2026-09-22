@@ -1,0 +1,24 @@
+Extensions installed on Codespaces: stunning space winner:
+adpyke.vscode-sql-formatter
+analytic-signal.preview-pdf
+anthropic.claude-code
+anweber.httpbook
+anweber.vscode-httpyac
+bierner.markdown-checkbox
+bmewburn.vscode-intelephense-client
+celianriboulet.webvalidator
+davidanson.vscode-markdownlint
+dbaeumer.vscode-eslint
+ecmel.vscode-html-css
+github.codespaces
+github.github-vscode-theme
+github.vscode-pull-request-github
+jgclark.vscode-todo-highlight
+kisstkondoros.vscode-gutter-preview
+mrmlnc.vscode-apache
+mushan.vscode-paste-image
+pucelle.vscode-css-navigation
+sndst00m.vscode-native-svg-preview
+xdebug.php-debug
+yy0931.vscode-sqlite3-editor
+yzhang.markdown-all-in-one

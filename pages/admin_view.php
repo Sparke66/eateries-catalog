@@ -38,10 +38,14 @@ if ($filter_param) {
   FROM restaurants
   INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
   INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
-    $sql_filter_clause = " WHERE tags.name = '" . $filter_param . "'";
+    $sql_filter_clause = " WHERE tags.name = :filter";
 
     $sql_rest_query = $sql_select_clause . $sql_filter_clause;
-    $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
+    $restaurants = exec_sql_query(
+        $db,
+        $sql_rest_query,
+        array(':filter' => $filter_param)
+    )->fetchAll();
 } else {
     // No filter: show all restaurants alphabetically
     $sql_rest_query = "SELECT * FROM restaurants ORDER BY name";
