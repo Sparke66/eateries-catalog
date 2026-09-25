@@ -1,8 +1,34 @@
+/* Color palette and shared sizes, taken from the wireframes */
+:root {
+    --ink: #1e1e1c;
+    --muted: #66665f;
+    --paper: #fafaf8;
+    --surface: #ffffff;
+    --soft: #ecebe6;
+    --error: #b3261e;
+    --radius: 8px;
+    --mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+/* Padding and borders count toward an element's width */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 /* Global HTML styling */
-/* Sets base font family and background color for entire document */
+/* Sets base font family, text color and background color for entire document */
 html {
     font-family: 'Inter', 'Open Sans', Arial, sans-serif;
-    background-color: rgb(255, 242, 182);
+    color: var(--ink);
+    background-color: var(--paper);
+}
+
+/* Body styling */
+/* Sets line height for readability */
+body {
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
 }
 
 /* Main content container */
@@ -10,176 +36,610 @@ html {
 main {
     max-width: 1200px;
     margin: auto;
+    padding: 28px 40px 56px;
 }
 
-/* Page heading styling */
-/* Centers h1 elements and adds consistent spacing */
-h1 {
-    text-align: center;
-    margin: 10px;
+/* Headings get their size and spacing from the component they sit in */
+h1, h2, h3 {
+    margin: 0;
+    line-height: 1.2;
 }
 
-/* CSS styling for the filter bar */
-/* Creates horizontal layout for tag filtering interface */
-.tags {
-    background-color: aqua;
+a {
+    color: inherit;
+}
+
+/* Secondary text */
+.muted {
+    color: var(--muted);
+}
+
+/* Small uppercase label above a heading, e.g. "RESTAURANT INFORMATION" */
+.eyebrow {
+    margin: 0 0 8px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* ---------- Site header ---------- */
+
+/* Logo and title on the left, tagline or login controls on the right */
+.site-header {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+    padding: 20px 40px;
+    border-bottom: 2px solid var(--ink);
 }
 
-/* Label/heading within the tag filter bar */
-.tags p {
-    min-width: 150px;
-    margin: auto;
-    text-align: center;
+/* Admin pages use a white header */
+.admin-page .site-header {
+    background-color: var(--surface);
 }
 
-/* CSS for each individual tag within the filter bar */
-/* Creates rounded pill-style buttons for tags */
-.tag {
-    padding: 5px;
-    margin: 5px;
-    border-radius: 25px;
-    font-size: 16px;
-}
-
-/* Hard codes the tags to return visual feedback when hovering the curser over a tag */
-/* The cursor should change into a hand icon or pointer */
-.tag:hover {
-    color: #0056b3;
-    cursor: pointer;
-}
-
-/* Prevents underlines between tags */
-.tags a {
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
     text-decoration: none;
 }
 
-/* Admin-specific tag styling */
-/* Pink background distinguishes admin tag section from consumer view */
-aside.admin-tags .tags {
-    background-color: pink;
+/* Circular logo mark */
+.logo {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    background-color: var(--soft);
+    font-size: 1.1rem;
+}
+
+.tagline {
+    margin: 0 0 0 auto;
+    color: var(--muted);
+}
+
+/* "ADMINISTRATOR PORTAL" label */
+.badge {
+    padding: 4px 10px;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* "Signed in as" text and logout button */
+.admin-login {
     display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+    color: var(--muted);
 }
 
-/* Spacing for admin tag links */
-aside.admin-tags .tags a .tag {
-    margin-left: 5px;
-    margin-right: 5px;
+.admin-login form {
+    margin: 0;
 }
 
-/* General tile styling */
-/* Black border for all restaurant tiles */
-main .tile {
-    border: solid black;
+/* ---------- Shared components ---------- */
+
+/* White box with a dark outline */
+.card {
+    padding: 20px;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background-color: var(--surface);
 }
+
+/* Outlined button; add .primary for the filled dark version */
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid var(--ink);
+    border-radius: 6px;
+    background-color: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--soft);
+}
+
+.button.primary {
+    background-color: var(--ink);
+    color: var(--surface);
+}
+
+.button.primary:hover {
+    background-color: #3a3a37;
+}
+
+.button.full {
+    display: block;
+    width: 100%;
+}
+
+/* "← Return to ..." links above page content */
+.back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+/* Page heading with a count or action on the right */
+.section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin: 32px 0 20px;
+}
+
+.section-heading h1 {
+    font-size: 1.5rem;
+}
+
+.section-heading p {
+    margin: 0;
+}
+
+/* ---------- Tags ---------- */
+
+/* CSS styling for the filter bar */
+.tags h2 {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* CSS for each individual tag */
+/* Creates rounded pill-style buttons for tags */
+.tag {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background-color: var(--surface);
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+/* Visual feedback when hovering over a tag link */
+a.tag:hover {
+    background-color: var(--soft);
+}
+
+/* The currently selected filter */
+.tag.active {
+    background-color: var(--ink);
+    color: var(--surface);
+}
+
+/* ---------- Catalog grids and tiles ---------- */
+
+/* Grid of restaurant tiles; columns fill the available width */
+.catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* Admin tiles are smaller */
+.admin .catalog {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+
+figure {
+    margin: 0;
+}
+
+/* Consumer and admin tiles: photo on top, text below */
+.tile,
+.admin-tile {
+    overflow: hidden;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+}
+
+.tile figure img,
+.admin-tile figure img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+    border-bottom: 1px solid var(--ink);
+}
+
+.admin-tile figure img {
+    aspect-ratio: 3 / 2;
+}
+
+/* CSS for text in each consumer tile */
+.tile .tile-text {
+    padding: 14px 16px 16px;
+}
+
+.tile h3 {
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+}
+
+.tile p {
+    margin: 0 0 4px;
+}
+
+.tile .description {
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+/* Gap between rating and average price */
+.spaced {
+    margin-left: 14px;
+}
+
+/* Admin tile: name on the left, edit button on the right */
+.admin-tile-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+}
+
+.admin-tile h2 {
+    font-size: 1rem;
+}
+
+/* Square outlined button holding an icon */
+.icon-button {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--ink);
+    border-radius: 6px;
+}
+
+.icon-button:hover {
+    background-color: var(--soft);
+}
+
+img.edit-button {
+    width: 18px;
+    height: 18px;
+}
+
+/* ---------- Admin layout ---------- */
 
 /* Admin layout: displays sidebar and main content side-by-side */
 .admin-aside-main {
     display: flex;
+    min-height: calc(100vh - 90px);
 }
 
-/* Admin tile styling */
-/* Red border to distinguish admin view, horizontal layout for content */
-.admin-tile {
-    border: solid red;
-    display: flex;
-}
-
-/* Admin tile image sizing */
-/* Smaller images in admin view for compact display */
-.admin-tile figure img {
-    width: 150px;
-    height: 100px;
-}
-
-/* CSS for the catalog and flex behavior of its children */
-/* Flexbox layout allows tiles to wrap and fill available space */
-.catalog {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-}
-
-/* CSS for each consumer tile */
-/* Sets consistent spacing and maximum width for restaurant cards */
-.tile {
-    margin: 10px;
-    max-width: 350px;
-}
-
-/* Figure container for tile images */
-/* Fixed dimensions for consistent image display */
-.tile figure {
-    margin: 0px;
-    width: 350px;
-    height: 175px;
-}
-
-/* Tile image sizing */
-/* Ensures images fill the figure container */
-.tile figure img {
-    width: 350px;
-    height: 175px;
-}
-
-/* CSS for text in each consumer tile. Margins are expected to be small */
-/* Consistent spacing for tile content */
-.tile .tile-text {
-    margin: 10px;
-}
-
-/* Tile heading styling */
-/* Removes default margins for tight spacing */
-.tile h3 {
-    margin: 0px;
-}
-
-/* Tile paragraph styling */
-/* Removes default margins for compact layout */
-.tile p {
-    margin: 0px;
-}
-
-/* Edit button image sizing */
-/* Small icon size for edit controls */
-img.edit-button {
-    width: 50px;
-}
-
-/* Multi-select dropdown styling */
-/* Increased height to show multiple options at once */
-select {
-    height: 200px;
-}
-
-/* Textarea input sizing */
-/* Fixed width for consistent form layout */
-textarea {
-    width: 300px;
-}
-
-/* Body styling */
-/* Sets line height for readability and pink background */
-body {
-    line-height: 1.6;
-    background-color: #ffc9c9;
+.admin-aside-main main {
+    flex: 1;
     margin: 0;
-    padding: 0;
+}
+
+.admin-aside-main .section-heading {
+    margin-top: 0;
+}
+
+/* Tag filter sidebar */
+.admin-tags {
+    flex: 0 0 260px;
+    padding: 28px 20px;
+    border-right: 2px solid var(--ink);
+    background-color: var(--surface);
+}
+
+.admin-tags h2 {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.tag-nav a {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.tag-nav a:hover {
+    background-color: var(--soft);
+}
+
+.tag-nav a.active {
+    background-color: var(--ink);
+    color: var(--surface);
+}
+
+/* ---------- Restaurant details and edit pages ---------- */
+
+/* Large photo with a full outline */
+.photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--ink);
+    border-radius: var(--radius);
+}
+
+/* Consumer entry: photo and details side by side */
+.entry {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 44px;
+    align-items: start;
+}
+
+.entry h1 {
+    margin-bottom: 24px;
+    font-size: 2.6rem;
+}
+
+.entry h2 {
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.entry-info > p {
+    margin: 0 0 24px;
+}
+
+/* Rating, price and address boxes */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 0 0 28px;
+}
+
+.stats .card {
+    padding: 14px 16px;
+}
+
+.stats dt {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.stats dd {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+/* Admin edit: sidebar column and form column */
+.edit-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+.edit-sidebar {
+    display: grid;
+    gap: 18px;
+}
+
+.edit-sidebar h2 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.edit-sidebar p {
+    margin: 0 0 14px;
+}
+
+/* Delete confirmation step */
+.confirm {
+    border-style: dashed;
+    background-color: var(--soft);
+}
+
+.confirm form {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+}
+
+/* ---------- Forms ---------- */
+
+/* Narrow centered column for the insert and login pages */
+main.narrow {
+    max-width: 730px;
+}
+
+main.login {
+    max-width: 610px;
+    padding-top: 96px;
+}
+
+.form-card {
+    padding: 32px;
+}
+
+.form-card h1 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+/* Rating and price side by side */
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
 }
 
 /* Form label styling */
 /* Block display for labels above inputs, bold weight for emphasis */
 label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     font-weight: 600;
 }
 
-.consumer .background {
-    background-image: url("/images/placeholder.jpg");
-    background-size: cover; /* Makes image cover the container */
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents tiling */
-    min-height: 400px;
+input[type="text"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--ink);
+    border-radius: 6px;
+    background-color: var(--surface);
+    color: var(--ink);
+    font: inherit;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Multi-select shows several tags at once */
+select[multiple] {
+    height: 9.5rem;
+    padding: 4px 8px;
+}
+
+/* Small helper text under a field */
+.hint {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+/* Dashed box around the file input */
+.file-drop {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border: 1px dashed var(--ink);
+    border-radius: 6px;
+}
+
+.file-drop .hint {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+}
+
+/* Cancel and submit buttons, right-aligned */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+/* Validation and login error messages */
+.error {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border: 1px dashed var(--error);
+    border-radius: 6px;
+    background-color: #fdf3f2;
+    color: var(--error);
+}
+
+.centered {
+    margin: 18px 0 0;
+    text-align: center;
+}
+
+/* ---------- 404 page ---------- */
+
+.not-found {
+    padding-top: 96px;
+    text-align: center;
+}
+
+.error-code {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 6rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.not-found h1 {
+    margin: 16px 0 12px;
+    font-size: 2rem;
+}
+
+.not-found .muted {
+    margin: 0 0 24px;
+    font-size: 1.1rem;
+}
+
+/* ---------- Narrow screens ---------- */
+
+/* Stack columns and tighten side padding on phones and small tablets */
+@media (max-width: 800px) {
+    .site-header,
+    main {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .entry,
+    .edit-layout,
+    .field-row,
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-aside-main {
+        flex-direction: column;
+    }
+
+    .admin-tags {
+        border-right: none;
+        border-bottom: 2px solid var(--ink);
+    }
+
+    .tag-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .entry h1 {
+        font-size: 2rem;
+    }
 }

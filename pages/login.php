@@ -14,22 +14,42 @@ if (is_user_logged_in()) {
 ?>
 
 <!DOCTYPE html>
-<!-- Handle CSS styling separately for admin pages -->
-<html class="admin-page" lang="en">
+<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Login Page</title>
-</head>
+<?php $pageTitle = "Administrator Sign In"; include("includes/meta.php") ?>
 
 <body>
 
-    <h1>ADMIN LOGIN PAGE</h1>
+    <?php include("includes/header.php") ?>
 
-    <!-- Display login form with any error messages -->
-    <?php echo login_form("/login", $session_messages); ?>
+    <main class="login">
+        <div class="card form-card">
+            <p class="eyebrow">Administrator</p>
+            <h1>Sign in</h1>
+
+            <!-- Login feedback messages set by password_login() in includes/sessions.php -->
+            <?php foreach ($session_messages as $message): ?>
+                <p class="error"><?php echo htmlspecialchars($message); ?></p>
+            <?php endforeach; ?>
+
+            <!-- Field names match what process_session_params() expects -->
+            <form action="/login" method="post" novalidate>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="login_username" value="<?php echo htmlspecialchars($sticky_login_username ?? ""); ?>" required />
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="login_password" required />
+                </div>
+
+                <button class="button primary full" name="login" type="submit">Sign In</button>
+            </form>
+
+            <p class="centered"><a href="/">← Back to public catalog</a></p>
+        </div>
+    </main>
 
 </body>
 

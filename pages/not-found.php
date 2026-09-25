@@ -3,16 +3,18 @@
 <!-- Displayed when requested page/resource is not found -->
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Not Found</title>
-</head>
+<?php $pageTitle = "Page Not Found"; include("includes/meta.php") ?>
 
 <body>
 
-  <h1>404 Not Found</h1>
+  <?php include("includes/header.php") ?>
+
+  <main class="not-found">
+    <p class="error-code">404</p>
+    <h1>Page not found</h1>
+    <p class="muted">The page you’re looking for doesn’t exist or may have moved.</p>
+    <a class="button primary" href="/">Back to the catalog</a>
+  </main>
 
 </body>
 

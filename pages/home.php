@@ -6,23 +6,13 @@
  * Main public-facing page for browsing restaurants
  */
 
-// Constant array mapping numeric ratings to star display strings
-const RATING_STARS = array(
-  1 => "★☆☆☆☆",
-  2 => "★★☆☆☆",
-  3 => "★★★☆☆",
-  4 => "★★★★☆",
-  5 => "★★★★★"
-);
-
 // retrieve query string parameter for filtering
-// If no filter is set, show all restaurants
 // If no filter is set, show all restaurants
 $filter_param = $_GET["filter"] ?? NULL;
 
 // query the database for list of tags
-// Used to populate the filter buttons
-$sql_tag_query = "SELECT * FROM tags ORDER BY name";
+// Used to populate the filter buttons (cuisine, dietary, then price tags, in seed order)
+$sql_tag_query = "SELECT * FROM tags ORDER BY id";
 $tags = exec_sql_query($db, $sql_tag_query)->fetchAll();
 
 // note we can use the tag names directly for the filter parameters
@@ -33,7 +23,7 @@ if ($filter_param) {
   FROM restaurants
   INNER JOIN restaurant_tags ON (restaurants.id = restaurant_tags.restaurant_id)
   INNER JOIN tags ON (restaurant_tags.tag_id = tags.id)";
-  $sql_filter_clause = " WHERE tags.name = :filter";
+  $sql_filter_clause = " WHERE tags.name = :filter ORDER BY restaurants.name";
 
   $sql_rest_query = $sql_select_clause . $sql_filter_clause;
   $restaurants = exec_sql_query(
@@ -47,58 +37,47 @@ if ($filter_param) {
   $restaurants = exec_sql_query($db, $sql_rest_query)->fetchAll();
 }
 
+$result_count = count($restaurants);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
-
-<!-- Will need to eventually turn this into a partial via meta.php -->
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>Ithaca Eateries Catalog</title>
-
-  <link rel="stylesheet" type="text/css" href="/styles/site.css">
-</head>
 
 <?php include("includes/meta.php") ?>
 
 <body>
 
+  <?php include("includes/header.php") ?>
+
   <main class="consumer">
-    <!-- Consumer Page shall be implemented for narrow screen -->
 
-    <h1>Ithaca Eateries Catalog</h1>
-
-    <!-- Display the list of tags; may need to port over to partial -->
     <!-- Tag filter bar allows users to filter by cuisine type -->
-    <div class="tags">
-      <p> Select Cuisine Type: </p>
+    <!-- The active filter is highlighted -->
+    <section class="tags card">
+      <h2>Select Cuisine Type</h2>
       <div class="tag-list">
 
         <!-- Reset Filter button -->
-        <a href="/">
-          <button class="tag">All Restaurants</button>
-        </a>
+        <a class="tag<?php if (!$filter_param) echo " active"; ?>" href="/">All Restaurants</a>
 
         <?php
         // Generate a filter button for each tag
         foreach ($tags as $tag) {
           $tag_name = $tag["name"];
         ?>
-          <a href="/?<?php echo http_build_query(array(
+          <a class="tag<?php if ($filter_param === $tag_name) echo " active"; ?>" href="/?<?php echo http_build_query(array(
                         "filter" => $tag_name
-                      )); ?>">
-            <button class="tag"><?php echo htmlspecialchars($tag_name) ?></button>
-          </a>
+                      )); ?>"><?php echo htmlspecialchars($tag_name) ?></a>
         <?php
         }
         ?>
       </div>
+    </section>
 
-
+    <!-- Heading names the active filter and counts the results -->
+    <div class="section-heading">
+      <h1><?php echo htmlspecialchars($filter_param ?: "All Restaurants"); ?></h1>
+      <p class="muted"><?php echo $result_count . ($result_count == 1 ? " result" : " results"); ?></p>
     </div>
 
     <!-- Restaurant catalog grid -->
@@ -109,7 +88,7 @@ if ($filter_param) {
         $id = $restaurant["id"]; // added as reference for parameter to be passed
         $name = $restaurant["name"];
         $address = $restaurant["address"];
-        $rating = RATING_STARS[$restaurant["rating"]]; // Convert numeric rating to stars
+        $rating = $restaurant["rating"];
         $avg_price = $restaurant["avg_price"];
         $description = $restaurant["description"];
 
@@ -119,6 +98,10 @@ if ($filter_param) {
 
       ?>
     </div>
+
+    <?php if ($result_count == 0): ?>
+      <p class="muted">No restaurants match this filter yet.</p>
+    <?php endif; ?>
   </main>
 
 </body>

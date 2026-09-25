@@ -9,20 +9,20 @@
         <figure>
             <!-- Display restaurant image from uploads directory -->
             <img src="/public/uploads/restaurants/<?php echo $id . '.' . htmlspecialchars($file_ext); ?>" alt="<?php echo htmlspecialchars($name); ?>" />
-            <!-- <figcaption>Placeholder Image</figcaption> -->
         </figure>
     </a>
 
-    <div class=tile-text>
+    <div class="tile-text">
         <!-- Restaurant name as heading -->
         <h3><?php echo htmlspecialchars($name) ?></h3>
-        <!-- Location with emoji icon -->
-        <p>📍<?php echo htmlspecialchars($address) ?></p>
-        <!-- Star rating -->
-        <p>⭐Rating: <?php echo htmlspecialchars($rating) ?></p>
-        <!-- Average price per meal -->
-        <p>💵Avg Price: $<?php echo htmlspecialchars($avg_price) ?></p>
+        <!-- Location -->
+        <p class="muted">Address · <?php echo htmlspecialchars($address) ?></p>
+        <!-- Rating out of 5 and average price per meal -->
+        <p>
+            Rating <?php echo htmlspecialchars($rating) ?>/5
+            <span class="spaced">Avg price $<?php echo htmlspecialchars($avg_price) ?></span>
+        </p>
         <!-- Brief description -->
-        <p><?php echo htmlspecialchars($description) ?></p>
+        <p class="description"><?php echo htmlspecialchars($description) ?></p>
     </div>
 </div>
