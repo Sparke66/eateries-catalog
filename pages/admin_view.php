@@ -6,10 +6,14 @@
  * Requires user authentication - redirects to login if not authenticated
  */
 
-// Checks if user is logged in; implement for every admin page
+// Checks if user is an administrator; implement for every admin page
 if (!is_user_logged_in()) {
     // Not logged in - redirect to login page
     header("Location: /login");
+    exit;
+} else if (!is_admin()) {
+    // Logged in without the admin role - send back to the public catalog
+    header("Location: /");
     exit;
 }
 

@@ -15,6 +15,9 @@ $signup_messages = array();
 // Sessions expire after 1 hour of inactivity
 define('SESSION_COOKIE_DURATION', 60 * 60 * 1); // 1 hour = 60 sec * 60 min * 1 hr
 
+// Cookie that holds the CSRF token for form submissions
+define('CSRF_COOKIE', 'csrf_token');
+
 /**
  * Find user record by user ID
  * Returns user record from database or NULL if not found
@@ -28,24 +31,6 @@ function find_user($db, $user_id)
   )->fetchAll();
   if ($records) {
     // users are unique, there should only be 1 record
-    return $records[0];
-  }
-  return NULL;
-}
-
-/**
- * Find group record by group ID
- * Returns group record from database or NULL if not found
- */
-function find_group($db, $group_id)
-{
-  $records = exec_sql_query(
-    $db,
-    "SELECT * FROM groups WHERE id = :group_id;",
-    array(':group_id' => $group_id)
-  )->fetchAll();
-  if ($records) {
-    // groups are unique, there should only be 1 record
     return $records[0];
   }
   return NULL;
@@ -95,30 +80,13 @@ function is_user_logged_in()
 }
 
 /**
- * Check if current user is a member of a specific group
- * Returns true if user belongs to the group, false otherwise
+ * Check if the current user is an administrator
+ * Returns true only for logged-in users whose role is 'admin'
  */
-function is_user_member_of($db, $group_id)
+function is_admin()
 {
   global $current_user;
-  if ($current_user === NULL) {
-    return False;
-  }
-
-  // Check if user_groups table has an entry linking this user to the group
-  $records = exec_sql_query(
-    $db,
-    "SELECT id FROM user_groups WHERE (group_id = :group_id) AND (user_id = :user_id);",
-    array(
-      ':group_id' => $group_id,
-      ':user_id' => $current_user['id']
-    )
-  )->fetchAll();
-  if ($records) {
-    return True;
-  } else {
-    return False;
-  }
+  return ($current_user != NULL) && ($current_user['role'] === 'admin');
 }
 
 /**
@@ -374,145 +342,142 @@ function process_login_params($db, &$messages)
 }
 
 /**
+ * Get the CSRF token for this browser, creating it if needed
+ * Double-submit cookie: the token is kept in a cookie and repeated in a hidden
+ * form field. Another site can't read the cookie, so it can't forge the field.
+ * Call before any page output, since it may send a cookie.
+ */
+function csrf_token()
+{
+  static $token = NULL;
+
+  if ($token === NULL) {
+    $token = $_COOKIE[CSRF_COOKIE] ?? '';
+
+    // Missing or malformed cookie: issue a fresh random token
+    if (!is_string($token) || !preg_match('/^[0-9a-f]{64}$/', $token)) {
+      $token = bin2hex(random_bytes(32));
+      setcookie(CSRF_COOKIE, $token, array(
+        'path' => '/',
+        'httponly' => True,
+        'samesite' => 'Strict'
+      ));
+    }
+  }
+  return $token;
+}
+
+/**
+ * Check the CSRF token submitted with a POST form
+ * Returns true only if the hidden "csrf_token" field matches the cookie
+ */
+function csrf_token_valid()
+{
+  $cookie_token = $_COOKIE[CSRF_COOKIE] ?? '';
+  $form_token = $_POST['csrf_token'] ?? '';
+
+  return is_string($cookie_token) && is_string($form_token)
+    && $cookie_token !== '' && hash_equals($cookie_token, $form_token);
+}
+
+/**
  * Create a new user account
  * Validates username and password, creates new user record in database
  * Automatically logs in the user if account creation succeeds
+ * Returns true on success; on failure, adds reasons to $signup_messages
  */
-function create_account($db, $name, $username, $password, $password_confirmation)
+function create_account($db, $username, $password, $password_confirmation)
 {
   global $signup_messages;
-
   global $sticky_signup_username;
-  global $sticky_signup_name;
 
-  $name = trim($name);
+  // Passwords are trimmed to match password_login(), which trims before verifying
   $username = trim($username);
   $password = trim($password);
   $password_confirmation = trim($password_confirmation);
 
   $sticky_signup_username = $username;
-  $sticky_signup_name = $name;
 
   $account_valid = True;
 
-  // Begin transaction to ensure atomic account creation
-  $db->beginTransaction();
-
-  // check if username is unique, give error message if not.
-  if (empty($username)) {
+  // Username: 3-30 letters, numbers, or underscores
+  if ($username === '') {
     $account_valid = False;
     array_push($signup_messages, "Provide a username.");
-  } else {
-    $records = exec_sql_query(
-      $db,
-      "SELECT username FROM users WHERE (username = :username);",
-      array(
-        ':username' => $username
-      )
-    )->fetchAll();
-    if (count($records) > 0) {
-      $account_valid = False;
-      array_push($signup_messages, "Username is already taken, pick another username.");
-    }
+  } else if (!preg_match('/^[A-Za-z0-9_]{3,30}$/', $username)) {
+    $account_valid = False;
+    array_push($signup_messages, "Username must be 3 to 30 characters long and use only letters, numbers, and underscores.");
   }
 
-  // TODO: check if password meets security requirements.
-  if (empty($password)) {
+  // Password: at least 8 characters
+  if ($password === '') {
     $account_valid = False;
     array_push($signup_messages, "Provide a password.");
+  } else if (strlen($password) < 8) {
+    $account_valid = False;
+    array_push($signup_messages, "Password must be at least 8 characters long.");
   }
 
   // Check if passwords match
-  if ($password != $password_confirmation) {
+  if ($password !== $password_confirmation) {
     $account_valid = False;
     array_push($signup_messages, "Password confirmation doesn't match your password. Reenter your password.");
-  } else {
-    // hash the password
-    // Using bcrypt for secure password storage
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
   }
 
-  if ($account_valid) {
-    // Insert new user into database
-    $result = exec_sql_query(
+  if (!$account_valid) {
+    return False;
+  }
+
+  // Insert new user; the UNIQUE constraint on username rejects duplicates,
+  // which also covers two people registering the same name at the same time
+  try {
+    exec_sql_query(
       $db,
-      "INSERT INTO users (name, username, password) VALUES (:name, :username, :password);",
+      "INSERT INTO users (username, password) VALUES (:username, :password);",
       array(
-        ':name' => $name,
         ':username' => $username,
-        ':password' => $hashed_password
+        // Using bcrypt for secure password storage
+        ':password' => password_hash($password, PASSWORD_DEFAULT)
       )
     );
-    if ($result) {
-      // account creation was successful. Login.
-      password_login($db, $messages, $username, $password);
-    } else {
-      array_push($messages, "Password confirmation doesn't match your password. Reenter your password.");
+  } catch (PDOException $exception) {
+    // 23000 = integrity constraint violation; anything else is a real server error
+    if ($exception->getCode() != '23000') {
+      throw $exception;
     }
+    array_push($signup_messages, "Username is already taken, pick another username.");
+    return False;
   }
 
-  $db->commit();
-}
-
-/**
- * Render HTML signup form
- * Displays registration form with name, username, and password fields
- * Shows validation messages if signup fails
- */
-function signup_form($action, $signup_messages)
-{
-  global $sticky_signup_username;
-  global $sticky_signup_name;
-  ob_start();
-?>
-  <!-- Signup feedback messages -->
-  <ul class="signup">
-    <?php
-    foreach ($signup_messages as $message) {
-      echo "<li class=\"feedback\"><strong>" . htmlspecialchars($message) . "</strong></li>\n";
-    } ?>
-  </ul>
-
-  <!-- Signup form with name, username, password, and confirmation inputs -->
-  <form class="signup" action="<?php echo htmlspecialchars($action) ?>" method="post" novalidate>
-    <div class="label-input">
-      <label for="name">Name:</label>
-      <input id="name" type="text" name="signup_name" value="<?php echo htmlspecialchars($sticky_signup_name); ?>" required />
-    </div>
-
-    <div class="label-input">
-      <label for="username">Username:</label>
-      <input id="username" type="text" name="signup_username" value="<?php echo htmlspecialchars($sticky_signup_username); ?>" required />
-    </div>
-
-    <div class="label-input">
-      <label for="password">Password:</label>
-      <input id="password" type="password" name="signup_password" required />
-    </div>
-
-    <div class="label-input">
-      <label for="confirm_password">Confirm Password:</label>
-      <input id="confirm_password" type="password" name="signup_confirm_password" required />
-    </div>
-
-    <div class="align-right">
-      <button name="signup" type="submit">Sign Up</button>
-    </div>
-
-  </form>
-<?php
-  $html = ob_get_clean();
-  return $html;
+  // account creation was successful. Login.
+  return password_login($db, $signup_messages, $username, $password) != NULL;
 }
 
 /**
  * Process signup form submission
  * Check for sign up request and create account if form submitted
+ * Returns true if an account was created and the new user is logged in
  */
 function process_signup_params($db)
 {
-  // Check if we should login the user
-  if (isset($_POST['signup'])) {
-    create_account($db, $_POST['signup_name'], $_POST['signup_username'], $_POST['signup_password'], $_POST['signup_confirm_password']);
+  global $signup_messages;
+  global $sticky_signup_username;
+
+  if (!isset($_POST['signup'])) {
+    return False;
   }
+
+  // Ignore tampered fields (e.g. arrays) rather than erroring on them
+  $username = is_string($_POST['signup_username'] ?? NULL) ? $_POST['signup_username'] : '';
+  $password = is_string($_POST['signup_password'] ?? NULL) ? $_POST['signup_password'] : '';
+  $password_confirmation = is_string($_POST['signup_confirm_password'] ?? NULL) ? $_POST['signup_confirm_password'] : '';
+
+  // Only accept the form from our own registration page
+  if (!csrf_token_valid()) {
+    $sticky_signup_username = trim($username);
+    array_push($signup_messages, "Your form expired. Please submit it again.");
+    return False;
+  }
+
+  return create_account($db, $username, $password, $password_confirmation);
 }

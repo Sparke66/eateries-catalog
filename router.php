@@ -109,7 +109,8 @@ const ROUTES = array(
   "/admin"       => "pages/admin_view.php",     // admin view all / filter by tag
   "/admin/entry" => "pages/admin_insert.php",   // admin insert entry
   "/admin/edit"  => "pages/admin_edit.php",     // admin edit entry / tag / untag
-  "/login"       => "pages/login.php"           // login
+  "/login"       => "pages/login.php",          // login
+  "/register"    => "pages/register.php"        // create a regular user account
 );
 
 // Grabs the URI and separates it from query string parameters

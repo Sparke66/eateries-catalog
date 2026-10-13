@@ -107,6 +107,18 @@ a {
     color: var(--muted);
 }
 
+/* Sign in / Register links, or the signed-in user and Log out button */
+.account-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--muted);
+}
+
+.account-nav form {
+    margin: 0;
+}
+
 /* "ADMINISTRATOR PORTAL" label */
 .badge {
     padding: 4px 10px;
@@ -411,6 +423,33 @@ img.edit-button {
 
 .entry-info > p {
     margin: 0 0 24px;
+}
+
+/* Reviews below the restaurant details */
+.reviews {
+    max-width: 730px;
+    margin-top: 48px;
+}
+
+.review-list {
+    display: grid;
+    gap: 14px;
+    margin: 0 0 28px;
+    padding: 0;
+    list-style: none;
+}
+
+.review-list p {
+    margin: 0;
+}
+
+.review-list .review-meta {
+    margin-bottom: 8px;
+    color: var(--muted);
+}
+
+.review-list .review-meta strong {
+    color: var(--ink);
 }
 
 /* Rating, price and address boxes */

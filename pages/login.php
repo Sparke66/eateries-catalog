@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Admin Login Page
- * Handles administrator authentication
- * Redirects to admin portal if already logged in
+ * Login Page
+ * Handles authentication for administrators and registered users
+ * Redirects to admin portal (admins) or the catalog (users) if already logged in
  */
 
-// If user is already logged in, redirect to admin page
+// If user is already logged in, redirect admins to the portal and everyone else to the catalog
 if (is_user_logged_in()) {
-    header("Location: /admin");
+    header("Location: " . (is_admin() ? "/admin" : "/"));
     exit;
 }
 ?>
@@ -16,7 +16,7 @@ if (is_user_logged_in()) {
 <!DOCTYPE html>
 <html lang="en">
 
-<?php $pageTitle = "Administrator Sign In"; include("includes/meta.php") ?>
+<?php $pageTitle = "Sign In"; include("includes/meta.php") ?>
 
 <body>
 
@@ -24,7 +24,7 @@ if (is_user_logged_in()) {
 
     <main class="login">
         <div class="card form-card">
-            <p class="eyebrow">Administrator</p>
+            <p class="eyebrow">Account</p>
             <h1>Sign in</h1>
 
             <!-- Login feedback messages set by password_login() in includes/sessions.php -->
@@ -47,6 +47,7 @@ if (is_user_logged_in()) {
                 <button class="button primary full" name="login" type="submit">Sign In</button>
             </form>
 
+            <p class="centered">No account yet? <a href="/register">Register</a></p>
             <p class="centered"><a href="/">← Back to public catalog</a></p>
         </div>
     </main>

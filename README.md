@@ -1,79 +1,81 @@
-# INFO 2300 - Project 2
+# Eateries Catalog
 
-Open this repository as a Codespace on GitHub (or as a container in VS Code.)
+A PHP + SQLite restaurant catalog. Visitors browse restaurants and filter them by cuisine tag; registered users post reviews; administrators log in to add, edit, tag, and remove entries.
 
-## Design Plan
+Built for INFO 2300 (Project 2). Design process and milestones are documented in the [design journey](design-plan/design-journey.md).
 
-Document your design and your plan in the [design journey](design-plan/design-journey.md).
+## Features
 
-## Guide
+**Consumer**
 
-- "/"            => "pages/home.php",           // consumer view all / filterby tag
-- "/reviews"     => "pages/consumer_entry.php", // consumer entry details
-- "/admin"       => "pages/admin_view.php",     // admin view all / filter bytag
-- "/admin/entry" => "pages/admin_insert.php",   // admin insert entry
-- "/admin/edit"  => "pages/admin_edit.php",     // admin edit entry / tag /untag
-- "/login"       => "pages/login.php"           // login
+- Browse all restaurants as tiles with image, rating, and average price
+- Filter by cuisine tag, with a reset button to clear the filter
+- View an individual restaurant's details and its reviews
 
-## Known Issues
+**Registered users**
 
-- Explicit visual feedback from mouse when hovering over certain regions outside the bounds of the filter buttons. Has to do with the way the `<a>` tags are structured
-- Administrator Portal requires huge overhaul
-- Individual view of restaurants need to be redesigned
-- The filter bar element needs some adjustment - recommend different color, rounding of edges, shadowing
-- Restaurant tiles should also have edge rounding and shadowing
-- Each button in the filter bar could also use shadowing
-- Consumer Entry page under construction to test background images within `<div>` containers
+- Create an account at `/register` and sign in from any page header
+- Post one rating (1–5) and review per restaurant
 
-## Proposed Future Additions
+**Administrator**
 
-- Search bar function to search for a specific restaurant
-- Implement multiple filters
-- Show the opening hours of the restaurant
--
+- Session-based login; only accounts with the `admin` role can open the portal
+- Add, edit, and delete restaurants, including image upload
+- Tag and untag restaurants
+- Validated forms that keep your input after an error
 
-## Update 7 (09-25-26)
+**Security**
 
-- Added an extension whitelist to certain file upload formats (JPG, JPEG, PNG)
-- Added content verification for image files, so text files renamed to `.jpg` are rejected
-- Added server-side file size limit (1 MB), including files rejected by PHP before they reach the size check
-- Fixed an issue where failed upload checks still inserted the restaurant and saved the file
-- Moved form validation into a shared partial (`includes/restaurant-validation.php`) used by both the Add and Edit pages. The Edit page previously had no upload validation
-- Added validation for the rest of the form: name and address are required, rating must be a whole number from 1 to 5, and average price must be a whole number of dollars
-- Admin forms now keep entered values after a validation error
-- Finished implementation of the head elements of each page as partials
-- Fixed the invalid nesting of the filter bar
-- Redesigned all seven pages to follow the wireframes, with shared headers for public and admin pages (`includes/header.php`, `includes/admin-header.php`)
-- Restaurants that don't exist now show the 404 page on the Consumer Entry and Admin Edit pages
-- Removing every tag from a restaurant on the Edit page now works
-- Changing a restaurant's image to a different file type now deletes the old image
-- Fixed extra spaces being added around the description every time a restaurant was edited
+- Parameterized SQL queries (no SQL injection)
+- Image uploads limited to JPG, JPEG, and PNG, verified by content, capped at 1 MB
+- Hashed (bcrypt) passwords and case-insensitive usernames
+- CSRF tokens on the registration and review forms
+- Role check on every admin page
 
-## Update 6 (9-22-26)
+## Getting Started
 
-- Fixed SQL Injection vulnerabilities within the Consumer View Page and Admin View Page
+Open this repository as a Codespace on GitHub, or as a container in VS Code. The dev container provides PHP 8.4.
 
-## Update 5 (2-13-26)
+Start the server with the **Run and Debug** launch configuration in [.vscode/launch.json](.vscode/launch.json), or from a terminal:
 
-- Consumer Entry Page under construction: testing features to add background images inside `<div>` containers
+```bash
+php -S localhost:8000 router.php
+```
 
-## Update 4 (2-13-26)
+The database ([db/init.sql](db/init.sql)) is built into `db/site.sqlite` on first run. After changing `init.sql`, delete `db/site.sqlite` to rebuild it from the seed data.
 
-- Fixed the filter tags to return visual feedback when hovering over buttons. The cursor should now change into a hand icon or pointer when hovering over buttons.
-- Added a button to reset the filter of the Homepage
-- Removed unusual underlines between tags on filter bar.
+The seeded administrator account is `admin` / `monkey`.
 
-## Update 3 (2-13-26)
+## Routes
 
-- Added comments throughout the repository for better code readability
+| Path           | Page                       | Description                                   |
+| -------------- | -------------------------- | --------------------------------------------- |
+| `/`            | `pages/home.php`           | Consumer view: all restaurants, filter by tag |
+| `/reviews`     | `pages/consumer_entry.php` | Consumer view: single restaurant and reviews  |
+| `/login`       | `pages/login.php`          | Sign in (admins and registered users)         |
+| `/register`    | `pages/register.php`       | Create a user account                         |
+| `/admin`       | `pages/admin_view.php`     | Admin view: all restaurants, filter by tag    |
+| `/admin/entry` | `pages/admin_insert.php`   | Add a restaurant                              |
+| `/admin/edit`  | `pages/admin_edit.php`     | Edit a restaurant, tag / untag                |
 
-## Update 2 (1-21-26)
+## Project Structure
 
-- Fixed an issue where text would not wrap around tile containers
-- Changed the font family of the website
+```
+router.php      Request router, static files, error pages
+pages/          One file per route, plus the 404 page
+includes/       Shared partials: headers, tiles, form fields, validation, DB and session helpers
+public/         CSS, images, and uploaded restaurant images
+db/             Schema (init.sql) and SQLite database
+design-plan/    Wireframes, milestone write-ups, and the manual test checklist
+```
 
-## Update 1 (1-20-26)
+## Roadmap
 
-- Overhauled the Cuisine Filter Tab on the Consumer Homepage to follow formatting semantics
-- Overhauled the formatting semantics of each restaurant tile
-- Fixed an issue where the hyperlink encapsulated the entire tile. The hyperlink now only works by clicking on the image.
+- Search bar for finding a specific restaurant
+- Multiple simultaneous filters
+- Display restaurant opening hours
+- Change restaurant rating scale to tenths-decimals, from 0.0 to 10.0 (1.0, 1.1, 1.2, ...)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the full release history.

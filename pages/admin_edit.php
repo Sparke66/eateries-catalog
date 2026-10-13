@@ -1,9 +1,13 @@
 <?php
 
-// Checks if user is logged in; implement for every admin page
+// Checks if user is an administrator; implement for every admin page
 if (!is_user_logged_in()) {
     // Not logged in - redirect to login page
     header("Location: /login");
+    exit;
+} else if (!is_admin()) {
+    // Logged in without the admin role - send back to the public catalog
+    header("Location: /");
     exit;
 }
 
@@ -30,6 +34,13 @@ if (isset($_POST['delete-confirmed'])) {
     exec_sql_query(
         $db,
         "DELETE FROM restaurant_tags WHERE restaurant_id = :id",
+        array(':id' => $restaurant_id)
+    );
+
+    // Delete the restaurant's reviews too (foreign key constraint)
+    exec_sql_query(
+        $db,
+        "DELETE FROM reviews WHERE restaurant_id = :id",
         array(':id' => $restaurant_id)
     );
 
