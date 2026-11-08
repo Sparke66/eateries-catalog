@@ -81,7 +81,11 @@ $id = $restaurant["id"]; // added as reference for parameter to be passed
 // Used to pre-select current tags in the dropdown
 $sql_current_tags = "SELECT tag_id FROM restaurant_tags WHERE restaurant_id = :id";
 $current_tag_records = exec_sql_query($db, $sql_current_tags, array(':id' => $id))->fetchAll();
-$current_tag_ids = array_column($current_tag_records, 'tag_id');
+$selected_tag_ids = array_column($current_tag_records, 'tag_id');
+
+// Get all existing tags in database, grouped by category
+// For populating the multi-select dropdown and validating submitted tags
+$tag_groups = get_tag_groups($db);
 
 // Sticky form values start from the database record
 $form = array(
@@ -100,11 +104,14 @@ if (isset($_POST["edit-restaurant"])) {
         $form[$field] = trim($_POST[$field] ?? '');
     }
     // An empty selection means every tag was removed
-    $current_tag_ids = $_POST['tags'] ?? array();
+    $selected_tag_ids = $_POST['tags'] ?? array();
     // Handle file upload (optional when editing)
     $upload_file = $_FILES['restaurant-image'] ?? NULL;
 
     $error_message = validate_restaurant_form($form, $upload_file, FALSE);
+    if ($error_message == "") {
+        $error_message = validate_restaurant_tags($selected_tag_ids, $tag_groups);
+    }
 
     if ($error_message == "") {
         // Keep the current image unless a new one was uploaded
@@ -147,7 +154,7 @@ if (isset($_POST["edit-restaurant"])) {
             );
 
             // Then, insert the newly selected tags
-            foreach ($current_tag_ids as $tag_id) {
+            foreach ($selected_tag_ids as $tag_id) {
                 exec_sql_query(
                     $db,
                     "INSERT INTO restaurant_tags (restaurant_id, tag_id)
@@ -193,11 +200,6 @@ $sql_tags_query = "SELECT tags.name
                    ORDER BY tags.id";
 $restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $id))->fetchAll();
 
-// Get all existing tags in database
-// For populating the multi-select dropdown
-$sql_all_tags = "SELECT * FROM tags ORDER BY id";
-$all_tags = exec_sql_query($db, $sql_all_tags)->fetchAll();
-
 $edit_url = "/admin/edit?" . http_build_query(array('id' => $id));
 $image_hint = "Leave empty to keep the current image";
 
@@ -225,7 +227,7 @@ $image_hint = "Leave empty to keep the current image";
 
                 <!-- Display current tags for reference -->
                 <section class="card">
-                    <h2>Current Cuisine Types</h2>
+                    <h2>Current Tags</h2>
                     <div class="tag-list">
                         <?php foreach ($restaurant_tags as $tag) { ?>
                             <span class="tag"><?php echo htmlspecialchars($tag["name"]); ?></span>
@@ -267,19 +269,6 @@ $image_hint = "Leave empty to keep the current image";
                 <form method="post" enctype="multipart/form-data">
 
                     <?php include "includes/restaurant-form-fields.php"; ?>
-
-                    <!-- Multi-select for tag management; current tags are pre-selected -->
-                    <div class="field">
-                        <label for="tags">Tags</label>
-                        <select multiple name="tags[]" id="tags">
-                            <?php foreach ($all_tags as $tag): ?>
-                                <option value="<?php echo htmlspecialchars($tag['id']); ?>" <?php if (in_array($tag['id'], $current_tag_ids)) echo "selected"; ?>>
-                                    <?php echo htmlspecialchars($tag['name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <p class="hint">Ctrl/Cmd-click to tag or untag</p>
-                    </div>
 
                     <div class="form-actions">
                         <a class="button" href="/admin">Cancel</a>

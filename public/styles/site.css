@@ -225,6 +225,12 @@ a {
     gap: 8px;
 }
 
+/* Space between tag category groups */
+.tag-list + h2,
+.tag-nav a + h2 {
+    margin-top: 16px;
+}
+
 /* CSS for each individual tag */
 /* Creates rounded pill-style buttons for tags */
 .tag {

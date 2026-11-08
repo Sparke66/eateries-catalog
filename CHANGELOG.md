@@ -2,6 +2,32 @@
 
 All notable changes to this project are documented here. Dates are MM-DD-YY.
 
+## Update 9 (11-08-26)
+
+Requires rebuilding the database: delete `db/site.sqlite` so it is recreated from the new `init.sql`.
+
+### Added
+
+- Tag selection on the Add Restaurant page; the restaurant and its tags are saved together or not at all
+- Tag categories (Cuisine-Type, Dietary, Affordability) via a new `category` column on `tags`
+- Filter bars on the Homepage and Admin View are grouped by category, and several tags can be selected at once (shows restaurants matching any selected tag)
+- Consumer Entry page lists the restaurant's tags under their category headings
+- Average user rating, computed from reviews, shown on restaurant tiles and the Consumer Entry page alongside the critic rating
+- Server-side tag validation on the Add and Edit pages: unknown or repeated tag IDs are rejected, and a restaurant can have at most one affordability tag
+- Heights Falafel added to the seed data
+
+### Changed
+
+- Ratings (critic and user reviews) use a 0.0–10.0 scale with one decimal place, replacing whole numbers from 1 to 5; the review form uses a number field instead of a dropdown
+- Average price is stored and shown in dollars and cents
+- Tag multi-select moved into the shared form partial (`includes/restaurant-form-fields.php`) so the Add and Edit pages use the same field
+- Query for all tags grouped by category moved into `get_tag_groups()` for the admin forms
+- Manual test checklist updated for the 0.0–10.0 review rating and 13 seeded restaurants, with a new section for admin tagging
+
+### Fixed
+
+- Restaurants added from the Admin portal could not be given tags until they were edited
+
 ## Update 8 (10-13-26)
 
 ### Added

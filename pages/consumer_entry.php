@@ -21,14 +21,14 @@ if (!$restaurant) {
     exit;
 }
 
-// Get all tags for this restaurant
+// Get all tags for this restaurant, grouped by category
 // Join with tags table to get tag names
-$sql_tags_query = "SELECT tags.name
+$sql_tags_query = "SELECT tags.category, tags.name
                    FROM tags
                    INNER JOIN restaurant_tags ON tags.id = restaurant_tags.tag_id
                    WHERE restaurant_tags.restaurant_id = :id
                    ORDER BY tags.id";
-$restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaurant_id))->fetchAll();
+$restaurant_tags = exec_sql_query($db, $sql_tags_query, array(':id' => $restaurant_id))->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
 
 // Extract restaurant details from database record
 $id = $restaurant["id"]; // added as reference for parameter to be passed
@@ -62,9 +62,9 @@ if (isset($_POST["add-review"])) {
     } else if (!csrf_token_valid()) {
         array_push($review_errors, "Your form expired. Please submit it again.");
     } else {
-        // Rating must be exactly one of 1-5; anything else was tampered with
-        if (!preg_match('/^[1-5]$/', $review_form['rating'])) {
-            array_push($review_errors, "Choose a rating from 1 to 5.");
+        // Rating must be from 0.0 to 10.0 with at most one decimal place, same as the critic rating
+        if (!preg_match('/^\d+(\.\d)?$/', $review_form['rating']) || $review_form['rating'] > 10) {
+            array_push($review_errors, "Rating must be between 0.0 and 10.0 with at most one decimal place.");
         }
         if ($review_form['body'] === '') {
             array_push($review_errors, "Write a few words about your visit.");
@@ -83,7 +83,7 @@ if (isset($_POST["add-review"])) {
                 array(
                     ":restaurant_id" => $id,
                     ":user_id" => current_user()["id"],
-                    ":rating" => (int)$review_form['rating'],
+                    ":rating" => (float)$review_form['rating'],
                     ":body" => $review_form['body']
                 )
             );
@@ -108,6 +108,9 @@ $sql_reviews_query = "SELECT reviews.user_id, reviews.rating, reviews.body, revi
                       WHERE reviews.restaurant_id = :id
                       ORDER BY reviews.created_at DESC, reviews.id DESC";
 $reviews = exec_sql_query($db, $sql_reviews_query, array(':id' => $id))->fetchAll();
+
+// User rating: average of all review ratings (NULL when there are none)
+$user_rating = $reviews ? array_sum(array_column($reviews, "rating")) / count($reviews) : NULL;
 
 // Find the current user's review, if any; they may only post one
 $user_review = NULL;
@@ -148,12 +151,16 @@ $csrf_token = (is_user_logged_in() && !$user_review) ? csrf_token() : NULL;
                 <!-- Key facts shown as small cards -->
                 <dl class="stats">
                     <div class="card">
-                        <dt>Rating</dt>
-                        <dd><?php echo htmlspecialchars($rating); ?> / 5</dd>
+                        <dt>Critic rating</dt>
+                        <dd><?php echo number_format($rating, 1); ?> / 10</dd>
+                    </div>
+                    <div class="card">
+                        <dt>User rating</dt>
+                        <dd><?php echo $user_rating === NULL ? "No reviews yet" : number_format($user_rating, 1) . " / 10"; ?></dd>
                     </div>
                     <div class="card">
                         <dt>Average price</dt>
-                        <dd>$<?php echo htmlspecialchars($avg_price); ?></dd>
+                        <dd>$<?php echo number_format($avg_price, 2); ?></dd>
                     </div>
                     <div class="card">
                         <dt>Address</dt>
@@ -164,13 +171,15 @@ $csrf_token = (is_user_logged_in() && !$user_review) ? csrf_token() : NULL;
                 <h2>Description</h2>
                 <p><?php echo htmlspecialchars($description); ?></p>
 
-                <!-- Each tag links back to the catalog filtered by that tag -->
-                <h2>Cuisine Types</h2>
-                <div class="tag-list">
-                    <?php foreach ($restaurant_tags as $tag) { ?>
-                        <a class="tag" href="/?<?php echo http_build_query(array("filter" => $tag["name"])); ?>"><?php echo htmlspecialchars($tag["name"]); ?></a>
-                    <?php } ?>
-                </div>
+                <!-- Tags listed by category; each tag links back to the catalog filtered by that tag -->
+                <?php foreach ($restaurant_tags as $category => $category_tags) { ?>
+                    <h2><?php echo htmlspecialchars($category); ?></h2>
+                    <div class="tag-list">
+                        <?php foreach ($category_tags as $tag) { ?>
+                            <a class="tag" href="/?<?php echo http_build_query(array("filter" => $tag["name"])); ?>"><?php echo htmlspecialchars($tag["name"]); ?></a>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
             </div>
         </div>
 
@@ -186,7 +195,7 @@ $csrf_token = (is_user_logged_in() && !$user_review) ? csrf_token() : NULL;
                         <li class="card">
                             <p class="review-meta">
                                 <strong><?php echo htmlspecialchars($review["username"]); ?></strong>
-                                · <?php echo htmlspecialchars($review["rating"]); ?> / 5
+                                · <?php echo number_format($review["rating"], 1); ?> / 10
                                 · <time datetime="<?php echo htmlspecialchars($review["created_at"]); ?>"><?php echo htmlspecialchars(date("M j, Y", strtotime($review["created_at"] . " UTC"))); ?></time>
                             </p>
                             <p><?php echo nl2br(htmlspecialchars($review["body"])); ?></p>
@@ -213,12 +222,7 @@ $csrf_token = (is_user_logged_in() && !$user_review) ? csrf_token() : NULL;
 
                         <div class="field">
                             <label for="review-rating">Rating</label>
-                            <select id="review-rating" name="rating" required>
-                                <option value="">Choose a rating</option>
-                                <?php for ($stars = 5; $stars >= 1; $stars--) { ?>
-                                    <option value="<?php echo $stars; ?>" <?php if ($review_form['rating'] === (string)$stars) echo "selected"; ?>><?php echo $stars; ?> / 5</option>
-                                <?php } ?>
-                            </select>
+                            <input type="number" id="review-rating" name="rating" min="0" max="10" step="0.1" value="<?php echo htmlspecialchars($review_form['rating']); ?>" required>
                         </div>
 
                         <div class="field">

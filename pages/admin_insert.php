@@ -31,22 +31,34 @@ $form = array(
     'description' => ''
 );
 
+// All tags grouped by category, for the multi-select; none are selected on a new entry
+$tag_groups = get_tag_groups($db);
+$selected_tag_ids = array();
+
 // Process form submission when "add-restaurant" button is clicked
 if (isset($_POST["add-restaurant"])) {
     // Get the form data
     foreach (array_keys($form) as $field) {
         $form[$field] = trim($_POST[$field] ?? '');
     }
+    // Tags are optional; an empty selection leaves the restaurant untagged
+    $selected_tag_ids = $_POST['tags'] ?? array();
     // Handle file upload
     $upload_file = $_FILES['restaurant-image'] ?? NULL;
 
-    // Nothing is inserted unless every field and the image pass validation
+    // Nothing is inserted unless every field, the tags and the image pass validation
     $error_message = validate_restaurant_form($form, $upload_file, TRUE);
+    if ($error_message == "") {
+        $error_message = validate_restaurant_tags($selected_tag_ids, $tag_groups);
+    }
 
     if ($error_message == "") {
         $file_ext = strtolower(pathinfo(basename($upload_file['name']), PATHINFO_EXTENSION));
 
         try {
+            // Restaurant and its tags are saved together or not at all
+            $db->beginTransaction();
+
             // Insert new restaurant record into database
             exec_sql_query(
                 $db,
@@ -65,6 +77,21 @@ if (isset($_POST["add-restaurant"])) {
             // Get the auto-generated ID of the newly inserted restaurant
             $restaurant_id = $db->lastInsertId();
 
+            // Link the selected tags to the new restaurant
+            foreach ($selected_tag_ids as $tag_id) {
+                exec_sql_query(
+                    $db,
+                    "INSERT INTO restaurant_tags (restaurant_id, tag_id)
+                        VALUES (:restaurant_id, :tag_id)",
+                    array(
+                        ':restaurant_id' => $restaurant_id,
+                        ':tag_id' => $tag_id
+                    )
+                );
+            }
+
+            $db->commit();
+
             // Move uploaded file to permanent location with restaurant ID as filename
             $upload_path = "public/uploads/restaurants/" . $restaurant_id . "." . $file_ext;
             move_uploaded_file($upload_file['tmp_name'], $upload_path);
@@ -74,6 +101,7 @@ if (isset($_POST["add-restaurant"])) {
             exit;
         } catch (PDOException $exception) {
             // Database error occurred; names and addresses are UNIQUE in the database
+            $db->rollBack();
             $error_message = "Failed to add restaurant. The name or address may already be in the catalog.";
         }
     }

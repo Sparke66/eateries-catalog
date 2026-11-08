@@ -8,16 +8,16 @@ DROP TABLE IF EXISTS "restaurants";
 -- Restaurants table: stores information about each restaurant in the catalog
 -- name: unique restaurant name
 -- address: physical location (must be unique)
--- rating: customer rating on a scale (typically 1-5)
--- avg_price: average price per meal in dollars
+-- rating: customer rating from 0.0 to 10.0, one decimal place
+-- avg_price: average price per meal in dollars and cents
 -- description: brief description of the restaurant's cuisine and atmosphere
 -- file_ext: file extension for the restaurant's image (e.g., 'png', 'jpg')
 CREATE TABLE "restaurants" (
     "id" INTEGER NOT NULL UNIQUE,
     "name" TEXT UNIQUE NOT NULL,
     "address" TEXT UNIQUE NOT NULL,
-    "rating" INTEGER,
-    "avg_price" INTEGER,
+    "rating" REAL,
+    "avg_price" REAL,
     "description" TEXT,
     "file_ext" TEXT NOT NULL,
     PRIMARY KEY ("id" AUTOINCREMENT)
@@ -57,10 +57,11 @@ CREATE TABLE "sessions" (
 DROP TABLE IF EXISTS "tags";
 
 -- Tags table: stores all available tags for categorizing restaurants
--- Tags include cuisine types, dietary options, and price ranges
+-- category: which group the tag belongs to (cuisine type, affordability, or dietary)
 CREATE TABLE "tags" (
     "id" INTEGER NOT NULL UNIQUE,
     "name" TEXT NOT NULL,
+    "category" TEXT NOT NULL CHECK ("category" IN ('Cuisine-Type', 'Affordability', 'Dietary')),
     PRIMARY KEY ("id" AUTOINCREMENT)
 );
 
@@ -84,14 +85,14 @@ DROP TABLE IF EXISTS "reviews";
 -- Reviews table: one rating and review per user per restaurant
 -- restaurant_id: foreign key to restaurants table
 -- user_id: foreign key to the user who wrote the review
--- rating: whole number from 1 to 5
+-- rating: user rating from 0.0 to 10.0, one decimal place
 -- body: the review text
 -- created_at: when the review was posted (UTC)
 CREATE TABLE "reviews" (
     "id" INTEGER NOT NULL UNIQUE,
     "restaurant_id" INTEGER NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "rating" INTEGER NOT NULL CHECK ("rating" BETWEEN 1 AND 5),
+    "rating" REAL NOT NULL CHECK ("rating" BETWEEN 0 AND 10),
     "body" TEXT NOT NULL,
     "created_at" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY ("id" AUTOINCREMENT),
@@ -120,30 +121,30 @@ VALUES
 -- Seed data for tags
 -- Tags are used to categorize restaurants by cuisine type, dietary options, and price range
 INSERT INTO
-    "tags" ("name")
+    "tags" ("name", "category")
 VALUES
     -- tags for cuisine type
-    ('Italian'),
-    ('Chinese'),
-    ('Mexican'),
-    ('Indian'),
-    ('French'),
-    ('Japanese'),
-    ('Korean'),
-    ('Thai'),
-    ('American'),
+    ('Italian', 'Cuisine-Type'),
+    ('Chinese', 'Cuisine-Type'),
+    ('Mexican', 'Cuisine-Type'),
+    ('Indian', 'Cuisine-Type'),
+    ('French', 'Cuisine-Type'),
+    ('Japanese', 'Cuisine-Type'),
+    ('Korean', 'Cuisine-Type'),
+    ('Thai', 'Cuisine-Type'),
+    ('American', 'Cuisine-Type'),
     -- tags for dietary options
-    ('Vegan'),
-    ('Halal'),
-    ('Gluten-Free'),
-    ('Kosher'),
+    ('Vegan', 'Dietary'),
+    ('Halal', 'Dietary'),
+    ('Gluten-Free', 'Dietary'),
+    ('Kosher', 'Dietary'),
     -- tags for price range
-    ('Inexpensive'),
-    ('Moderate'),
-    ('Exquisite');
+    ('Inexpensive', 'Affordability'),
+    ('Moderate', 'Affordability'),
+    ('Exquisite', 'Affordability');
 
 -- Seed data for restaurants
--- Each restaurant includes name, address, rating (1-5), average price, description, and image file extension
+-- Each restaurant includes name, address, rating (0.0-10.0), average price, description, and image file extension
 INSERT INTO
     "restaurants" (
         "name",
@@ -157,98 +158,106 @@ VALUES
     (
         'Pasta Palace',
         '123 Noodle St',
-        5,
-        20,
+        9.1,
+        19.50,
         'Authentic Italian cuisine with a modern twist.',
         'png'
     ),
     (
         'Sushi Central',
         '456 Fish Ave',
-        4,
-        30,
+        8.4,
+        31.25,
         'Fresh sushi and sashimi prepared by expert chefs.',
         'png'
     ),
     (
         'Curry Corner',
         '789 Spice Rd',
-        5,
-        15,
+        9.3,
+        14.75,
         'Delicious Indian curries and tandoori dishes.',
         'png'
     ),
     (
         'Taco Town',
         '321 Fiesta Blvd',
-        4,
-        10,
+        7.8,
+        9.99,
         'Tasty Mexican street food in a casual setting.',
         'png'
     ),
     (
         'Baguette Bistro',
         '654 Bread Ln',
-        5,
-        25,
+        9.0,
+        24.50,
         'Classic French dishes with a cozy atmosphere.',
         'png'
     ),
     (
         'Dragon Wok',
         '88 Commons Ave',
-        4,
-        12,
+        7.5,
+        11.75,
         'Affordable Chinese takeout with generous portions.',
         'png'
     ),
     (
         'Kimchi House',
         '200 College Ave',
-        5,
-        18,
+        9.2,
+        17.99,
         'Traditional Korean BBQ and authentic flavors.',
         'png'
     ),
     (
         'Spice of Bangkok',
         '155 Cayuga St',
-        4,
-        16,
+        8.2,
+        15.50,
         'Authentic Thai dishes with adjustable spice levels.',
         'png'
     ),
     (
         'La Trattoria',
         '301 Stewart Ave',
-        5,
-        35,
+        9.6,
+        36.00,
         'Upscale Italian dining with homemade pasta.',
         'png'
     ),
     (
         'The Burger Joint',
         '99 Dryden Rd',
-        3,
-        8,
+        6.4,
+        8.49,
         'Quick American burgers and fries for students on the go.',
         'png'
     ),
     (
         'Samosa Palace',
         '176 Fall Creek Dr',
-        4,
-        11,
+        8.0,
+        10.99,
         'Indian street food specializing in vegetarian options.',
         'png'
     ),
     (
         'Zen Garden',
         '222 Eddy St',
-        5,
-        28,
+        9.5,
+        27.50,
         'Fine Japanese cuisine with traditional tea service.',
         'png'
+    ),
+    (
+        'Heights Falafel',
+        '78 Henry St, Brooklyn, NY 11201',
+        7.3,
+        10.00,
+        'Beef Shawarma Sandwich & Plate is affordable, delicious. Fast to order & pickup. Interior of restaurant is small, cozy environment. Warning: contains sesame in their food',
+        'jpeg'
     );
 
 -- Seed data for restaurant-tag associations

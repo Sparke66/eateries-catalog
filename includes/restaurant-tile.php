@@ -1,6 +1,6 @@
 <!-- Partial for generating tiles for each restaurant -->
 <!-- Consumer view: displays restaurant information in a card format -->
-<!-- Expects variables: $restaurant, $id, $name, $address, $rating, $avg_price, $description -->
+<!-- Expects variables: $restaurant, $id, $name, $address, $rating, $user_rating, $avg_price, $description -->
 
 <div class="tile">
     <?php $file_ext = $restaurant["file_ext"] ?>
@@ -17,10 +17,11 @@
         <h3><?php echo htmlspecialchars($name) ?></h3>
         <!-- Location -->
         <p class="muted">Address · <?php echo htmlspecialchars($address) ?></p>
-        <!-- Rating out of 5 and average price per meal -->
+        <!-- Critic rating out of 10, average user rating out of 10, and average price per meal -->
         <p>
-            Rating <?php echo htmlspecialchars($rating) ?>/5
-            <span class="spaced">Avg price $<?php echo htmlspecialchars($avg_price) ?></span>
+            Critic <?php echo number_format($rating, 1) ?>/10
+            <span class="spaced">User <?php echo $user_rating === NULL ? "–" : number_format($user_rating, 1) . "/10" ?></span>
+            <span class="spaced">Avg price $<?php echo number_format($avg_price, 2) ?></span>
         </p>
         <!-- Brief description -->
         <p class="description"><?php echo htmlspecialchars($description) ?></p>

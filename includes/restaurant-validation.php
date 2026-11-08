@@ -27,16 +27,14 @@ function validate_restaurant_form($form, $upload_file, $image_required)
         return "Address is required.";
     }
 
-    // Rating must be a whole number from 1 to 5
-    $rating_range = array('options' => array('min_range' => 1, 'max_range' => 5));
-    if (filter_var($form['rating'], FILTER_VALIDATE_INT, $rating_range) === FALSE) {
-        return "Rating must be a whole number between 1 and 5.";
+    // Rating must be from 0.0 to 10.0 with at most one decimal place
+    if (!preg_match('/^\d+(\.\d)?$/', $form['rating']) || $form['rating'] > 10) {
+        return "Rating must be between 0.0 and 10.0 with at most one decimal place.";
     }
 
-    // Average price is stored as whole dollars
-    $price_range = array('options' => array('min_range' => 0));
-    if (filter_var($form['avg_price'], FILTER_VALIDATE_INT, $price_range) === FALSE) {
-        return "Average price must be a whole number of dollars.";
+    // Average price is stored as dollars and cents
+    if (!preg_match('/^\d+(\.\d{1,2})?$/', $form['avg_price'])) {
+        return "Average price must be a dollar amount with at most two decimal places.";
     }
 
     // No file chosen: only an error when adding a new restaurant
@@ -65,6 +63,56 @@ function validate_restaurant_form($form, $upload_file, $image_required)
     finfo_close($finfo);
     if (!in_array($mime, ALLOWED_IMAGE_MIMES, TRUE)) {
         return "File is not a valid image.";
+    }
+
+    return "";
+}
+
+/**
+ * Get every tag in the database, grouped by category
+ * Returns: array('Cuisine-Type' => array(array('id' => 1, 'name' => 'Italian'), ...), ...)
+ */
+function get_tag_groups($db)
+{
+    $sql_all_tags = "SELECT category, id, name FROM tags ORDER BY id";
+    return exec_sql_query($db, $sql_all_tags)->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+}
+
+/**
+ * Validate the tag IDs submitted from the multi-select
+ * SQLite does not enforce foreign keys here, so a forged tag ID would be stored as-is
+ * $tag_ids: the raw $_POST['tags'] array (strings), possibly empty
+ * $tag_groups: all tags grouped by category, from get_tag_groups()
+ * Returns the first error message found, or "" if the selection is valid
+ */
+function validate_restaurant_tags($tag_ids, $tag_groups)
+{
+    // Tags are optional, but a forged form could send a single value instead of a list
+    if (!is_array($tag_ids)) {
+        return "Invalid tag selection.";
+    }
+
+    // The browser never sends the same option twice, so a repeat means a forged form
+    if (count($tag_ids) != count(array_unique($tag_ids))) {
+        return "Each tag can only be selected once.";
+    }
+
+    // A restaurant can't be both Inexpensive and Exquisite; cuisines and diets can combine
+    $single_choice_categories = array('Affordability');
+
+    $known_count = 0;
+    foreach ($tag_groups as $category => $tags) {
+        // Submitted IDs that belong to this category
+        $picked = array_intersect($tag_ids, array_column($tags, 'id'));
+        if (in_array($category, $single_choice_categories, TRUE) && count($picked) > 1) {
+            return "Choose at most one " . strtolower($category) . " tag.";
+        }
+        $known_count += count($picked);
+    }
+
+    // Any ID left over did not match a category, so it isn't in the tags table
+    if ($known_count != count($tag_ids)) {
+        return "One or more selected tags do not exist.";
     }
 
     return "";
